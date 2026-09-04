@@ -19,6 +19,7 @@ import {
   Chip,
   Stack,
   CircularProgress,
+  useTheme,
 } from "@mui/material";
 import AutoAwesomeRoundedIcon from "@mui/icons-material/AutoAwesomeRounded";
 import CodeRoundedIcon from "@mui/icons-material/CodeRounded";
@@ -68,6 +69,8 @@ export default function QueryRunner({
   title?: string;
   subtitle?: string;
 }) {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
   const queries = ids ? VERIFIED_QUERIES.filter((q) => ids.includes(q.id)) : VERIFIED_QUERIES;
   const [selected, setSelected] = useState(queries[0].id);
   const [result, setResult] = useState<QueryResult | null>(null);
@@ -97,7 +100,21 @@ export default function QueryRunner({
     <Card variant="outlined">
       <CardContent>
         <Stack direction="row" spacing={1} alignItems="center">
-          <AutoAwesomeRoundedIcon color="primary" fontSize="small" />
+          <Box
+            sx={{
+              width: 26,
+              height: 26,
+              borderRadius: "8px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              bgcolor: isDark ? "rgba(90,169,255,0.12)" : "rgba(42,95,176,0.07)",
+              color: "primary.main",
+              flexShrink: 0,
+            }}
+          >
+            <AutoAwesomeRoundedIcon fontSize="small" />
+          </Box>
           <Typography variant="h6">{title}</Typography>
         </Stack>
         <Typography variant="body2" color="text.secondary" gutterBottom sx={{ mt: 0.5 }}>
@@ -113,7 +130,12 @@ export default function QueryRunner({
               setResult(null);
               setError(null);
             }}
-            sx={{ minWidth: { sm: 380 } }}
+            sx={{
+              minWidth: { sm: 380 },
+              bgcolor: isDark ? "rgba(148,163,220,0.04)" : "transparent",
+              transition: "box-shadow 160ms ease",
+              "&:hover": { boxShadow: isDark ? "0 0 0 1px rgba(90,169,255,0.25)" : "none" },
+            }}
           >
             {queries.map((q) => (
               <MenuItem key={q.id} value={q.id}>
@@ -141,7 +163,13 @@ export default function QueryRunner({
           <>
             <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mb: 1.5 }} alignItems="center">
               {result.sources.map((s) => (
-                <Chip key={s} size="small" label={s} variant="outlined" />
+                <Chip
+                  key={s}
+                  size="small"
+                  label={s}
+                  variant="outlined"
+                  sx={{ borderColor: isDark ? "rgba(148,163,220,0.25)" : undefined }}
+                />
               ))}
               <Button
                 size="small"
@@ -152,17 +180,18 @@ export default function QueryRunner({
                 {showDetails ? "Hide technical details" : "Technical details"}
               </Button>
             </Stack>
-            <Collapse in={showDetails}>
+            <Collapse in={showDetails} timeout={220}>
               <Stack direction="row" spacing={1} sx={{ mb: 1 }}>
                 <Chip size="small" variant="outlined" label={`${result.executionMs} ms`} />
               </Stack>
               <Box
                 component="pre"
                 sx={{
-                  bgcolor: "grey.900",
-                  color: "grey.100",
+                  bgcolor: isDark ? "rgba(6,8,16,0.65)" : "grey.900",
+                  color: isDark ? "#c9d3f0" : "grey.100",
+                  border: isDark ? "1px solid rgba(148,163,220,0.16)" : "none",
                   p: 2,
-                  borderRadius: 1,
+                  borderRadius: 1.5,
                   overflowX: "auto",
                   fontSize: 13,
                   mb: 2,
@@ -172,7 +201,14 @@ export default function QueryRunner({
               </Box>
             </Collapse>
 
-            <Box sx={{ overflowX: "auto" }}>
+            <Box
+              sx={{
+                overflowX: "auto",
+                borderRadius: 1.5,
+                border: "1px solid",
+                borderColor: isDark ? "rgba(148,163,220,0.14)" : "divider",
+              }}
+            >
               <Table size="small">
                 <TableHead>
                   <TableRow>

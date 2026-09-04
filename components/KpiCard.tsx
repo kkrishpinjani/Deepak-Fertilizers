@@ -44,14 +44,29 @@ export default function KpiCard({
         position: "relative",
         overflow: "hidden",
         height: "100%",
-        transition: "border-color 0.15s, transform 0.15s",
+        transition: "border-color 0.15s, transform 0.15s, box-shadow 0.15s",
         ...(href && {
           cursor: "pointer",
-          "&:hover": { borderColor: "primary.main", transform: "translateY(-1px)" },
+          "&:hover": {
+            borderColor: "primary.main",
+            transform: "translateY(-2px)",
+            boxShadow: (t) => (t.palette.mode === "dark" ? `0 0 0 1px ${accent}55, 0 14px 32px ${accent}22` : undefined),
+          },
         }),
       }}
     >
-      <Box sx={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, bgcolor: accent, opacity: 0.9 }} />
+      <Box
+        sx={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          height: 3,
+          bgcolor: accent,
+          opacity: 0.9,
+          boxShadow: (t) => (t.palette.mode === "dark" ? `0 0 12px ${accent}` : "none"),
+        }}
+      />
       <CardContent>
         <Stack direction="row" alignItems="flex-start" justifyContent="space-between">
           <Stack direction="row" spacing={0.5} alignItems="center">

@@ -8,6 +8,7 @@ type Row = { label: string; value: number };
 
 export default function DonutChart({ data, unit = "raw", size = 220 }: { data: Row[]; unit?: ChartUnit; size?: number }) {
   const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
   const palette = [theme.palette.primary.main, theme.palette.secondary.main, theme.palette.warning.main, theme.palette.error.main, theme.palette.success.main];
   const [hover, setHover] = useState<number | null>(null);
 
@@ -29,6 +30,17 @@ export default function DonutChart({ data, unit = "raw", size = 220 }: { data: R
     <Stack direction={{ xs: "column", sm: "row" }} spacing={3} alignItems="center">
       <Box sx={{ position: "relative", width: size, height: size }}>
         <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+          {isDark && (
+            <defs>
+              <filter id="donutGlow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation={stroke * 0.22} result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+          )}
           {segments.map((s, i) => (
             <circle
               key={s.label}
@@ -45,6 +57,7 @@ export default function DonutChart({ data, unit = "raw", size = 220 }: { data: R
               onMouseLeave={() => setHover(null)}
               style={{ cursor: "pointer", transition: "opacity 0.15s" }}
               transform={`rotate(-90 ${r} ${r})`}
+              filter={isDark && (hover === null || hover === i) ? "url(#donutGlow)" : undefined}
             />
           ))}
         </svg>

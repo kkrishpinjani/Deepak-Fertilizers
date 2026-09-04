@@ -98,7 +98,7 @@ export default async function IndustrialPage() {
 
       <Grid container spacing={2} sx={{ mb: 4 }}>
         <Grid item xs={12} md={6}>
-          <ChartCard title="Pump P-220 temperature" subtitle="Live sensor trend, °C — dashed lines are the warn/alarm thresholds.">
+          <ChartCard title="Pump P-220 temperature" subtitle="Simulated sensor trend, °C — dashed lines are the warn/alarm thresholds.">
             <LineChart
               data={p220Temp.map((r) => ({ x: new Date(r.reading_time).toLocaleString(), y: Number(r.value) }))}
               warnThreshold={Number(p220Temp[0]?.warn_threshold)}

@@ -19,6 +19,7 @@ import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import RemoveRoundedIcon from "@mui/icons-material/RemoveRounded";
 import CenterFocusStrongRoundedIcon from "@mui/icons-material/CenterFocusStrongRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import { glow } from "./theme";
 
 const COLUMN_ORDER = ["Company", "Plant", "CostCenter", "ProfitCenter", "Product", "Customer", "Vendor", "GLAccount"];
 
@@ -67,6 +68,7 @@ function nodeRadius(degree: number) {
 
 export default function GraphExplorer() {
   const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
   const palette = PALETTE(theme);
 
   const [data, setData] = useState<{ stats: any; sample: Edge[] } | null>(null);
@@ -315,7 +317,22 @@ export default function GraphExplorer() {
         </Button>
       </Stack>
 
-      <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mb: 1.5 }}>
+      <Stack
+        direction="row"
+        spacing={1}
+        flexWrap="wrap"
+        useFlexGap
+        alignItems="center"
+        sx={{
+          mb: 1.5,
+          p: 1,
+          borderRadius: 2,
+          border: "1px solid",
+          borderColor: "divider",
+          bgcolor: isDark ? "rgba(17,21,36,0.55)" : "background.paper",
+          backdropFilter: isDark ? "blur(10px)" : undefined,
+        }}
+      >
         {labels.map((l) => (
           <Chip
             key={l}
@@ -328,6 +345,8 @@ export default function GraphExplorer() {
               cursor: "pointer",
               opacity: hiddenLabels.has(l) ? 0.35 : 1,
               textDecoration: hiddenLabels.has(l) ? "line-through" : "none",
+              boxShadow: isDark && !hiddenLabels.has(l) ? `0 0 8px ${colorForLabel(l, palette)}66` : "none",
+              transition: "opacity 160ms ease, box-shadow 160ms ease",
             }}
           />
         ))}
@@ -337,15 +356,53 @@ export default function GraphExplorer() {
       </Stack>
 
       <Stack direction={{ xs: "column", lg: "row" }} spacing={2} alignItems="flex-start">
-        <Box sx={{ position: "relative", flex: 1, minWidth: 0, border: "1px solid", borderColor: "divider", borderRadius: 2, overflow: "hidden" }}>
+        <Box
+          sx={{
+            position: "relative",
+            flex: 1,
+            minWidth: 0,
+            border: "1px solid",
+            borderColor: isDark ? "rgba(148,163,220,0.16)" : "divider",
+            borderRadius: 2,
+            overflow: "hidden",
+            boxShadow: isDark ? "0 12px 32px rgba(2,4,12,0.45)" : "none",
+          }}
+        >
           <Stack sx={{ position: "absolute", top: 8, right: 8, zIndex: 2 }} spacing={0.5}>
-            <IconButton size="small" onClick={() => zoom(0.2)} sx={{ bgcolor: "background.paper", border: "1px solid", borderColor: "divider" }}>
+            <IconButton
+              size="small"
+              onClick={() => zoom(0.2)}
+              sx={{
+                bgcolor: isDark ? "rgba(17,21,36,0.8)" : "background.paper",
+                border: "1px solid",
+                borderColor: "divider",
+                backdropFilter: isDark ? "blur(8px)" : undefined,
+              }}
+            >
               <AddRoundedIcon fontSize="small" />
             </IconButton>
-            <IconButton size="small" onClick={() => zoom(-0.2)} sx={{ bgcolor: "background.paper", border: "1px solid", borderColor: "divider" }}>
+            <IconButton
+              size="small"
+              onClick={() => zoom(-0.2)}
+              sx={{
+                bgcolor: isDark ? "rgba(17,21,36,0.8)" : "background.paper",
+                border: "1px solid",
+                borderColor: "divider",
+                backdropFilter: isDark ? "blur(8px)" : undefined,
+              }}
+            >
               <RemoveRoundedIcon fontSize="small" />
             </IconButton>
-            <IconButton size="small" onClick={resetView} sx={{ bgcolor: "background.paper", border: "1px solid", borderColor: "divider" }}>
+            <IconButton
+              size="small"
+              onClick={resetView}
+              sx={{
+                bgcolor: isDark ? "rgba(17,21,36,0.8)" : "background.paper",
+                border: "1px solid",
+                borderColor: "divider",
+                backdropFilter: isDark ? "blur(8px)" : undefined,
+              }}
+            >
               <CenterFocusStrongRoundedIcon fontSize="small" />
             </IconButton>
           </Stack>
@@ -358,7 +415,11 @@ export default function GraphExplorer() {
               width: "100%",
               height: 560,
               cursor: dragState.current.dragging ? "grabbing" : "grab",
-              background: theme.palette.mode === "dark" ? "rgba(255,255,255,0.015)" : "rgba(0,0,0,0.012)",
+              background: isDark
+                ? "radial-gradient(900px 520px at 25% 15%, rgba(90,169,255,0.07), transparent 60%)," +
+                  "radial-gradient(700px 460px at 85% 85%, rgba(167,139,250,0.06), transparent 55%)," +
+                  "#0a0d18"
+                : "rgba(0,0,0,0.012)",
             }}
             onWheel={onWheel}
             onMouseDown={onMouseDown}
@@ -366,6 +427,15 @@ export default function GraphExplorer() {
             onMouseUp={endDrag}
             onMouseLeave={endDrag}
           >
+            <defs>
+              <filter id="node-glow" x="-100%" y="-100%" width="300%" height="300%">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
             {(() => {
               const ccx = viewBox.x + viewBox.w / 2;
               const ccy = viewBox.y + viewBox.h / 2;
@@ -387,15 +457,16 @@ export default function GraphExplorer() {
                       y1={s.y}
                       x2={t.x}
                       y2={t.y}
-                      stroke={touchesSelection ? theme.palette.primary.main : theme.palette.divider}
+                      stroke={touchesSelection ? theme.palette.info.main : theme.palette.divider}
                       strokeWidth={touchesSelection ? 1.75 : 1}
-                      opacity={inFocus ? (touchesSelection ? 0.9 : 0.45) : 0.06}
+                      opacity={inFocus ? (touchesSelection ? 0.95 : 0.45) : 0.06}
+                      filter={touchesSelection && isDark ? "url(#node-glow)" : undefined}
                       onMouseEnter={() => setHoverEdge({ x: mx, y: my, label: l.relType, from: s.name, to: t.name })}
                       onMouseLeave={() => setHoverEdge(null)}
-                      style={{ cursor: "pointer" }}
+                      style={{ cursor: "pointer", transition: "opacity 160ms ease" }}
                     />
                     {touchesSelection && (
-                      <text x={mx} y={my - 4} textAnchor="middle" fontSize={9} fill={theme.palette.primary.main} fontWeight={700} style={{ pointerEvents: "none" }}>
+                      <text x={mx} y={my - 4} textAnchor="middle" fontSize={9} fill={theme.palette.info.main} fontWeight={700} style={{ pointerEvents: "none" }}>
                         {l.relType.replace(/_/g, " ").toLowerCase()}
                       </text>
                     )}
@@ -408,7 +479,9 @@ export default function GraphExplorer() {
                 if (hiddenLabels.has(n.label)) return null;
                 const inFocus = !focusSet || focusSet.has(n.key);
                 const isSelected = n.key === selectedKey;
+                const isHovered = hoverNode === n.key;
                 const r = nodeRadius(n.degree);
+                const fillColor = colorForLabel(n.label, palette);
                 return (
                   <g
                     key={n.key}
@@ -418,13 +491,17 @@ export default function GraphExplorer() {
                     style={{ cursor: "pointer" }}
                     opacity={inFocus ? 1 : 0.15}
                   >
+                    {isDark && (isSelected || isHovered) && (
+                      <circle cx={n.x} cy={n.y} r={r + (isSelected ? 6 : 4)} fill={fillColor} opacity={isSelected ? 0.28 : 0.18} filter="url(#node-glow)" />
+                    )}
                     <circle
                       cx={n.x}
                       cy={n.y}
                       r={r}
-                      fill={colorForLabel(n.label, palette)}
-                      stroke={isSelected ? theme.palette.text.primary : "none"}
-                      strokeWidth={isSelected ? 2.5 : 0}
+                      fill={fillColor}
+                      stroke={isSelected ? theme.palette.text.primary : isHovered ? fillColor : "none"}
+                      strokeWidth={isSelected ? 2.5 : isHovered ? 1.5 : 0}
+                      style={{ transition: "r 120ms ease" }}
                     />
                     {(hoverNode === n.key || isSelected || r > 9) && (
                       <text
@@ -453,13 +530,14 @@ export default function GraphExplorer() {
                 position: "absolute",
                 left: 10,
                 bottom: 10,
-                bgcolor: "background.paper",
+                bgcolor: isDark ? "rgba(17,21,36,0.9)" : "background.paper",
+                backdropFilter: isDark ? "blur(10px)" : undefined,
                 border: "1px solid",
-                borderColor: "divider",
-                borderRadius: 1,
+                borderColor: isDark ? "rgba(103,232,249,0.3)" : "divider",
+                borderRadius: 1.5,
                 px: 1.25,
                 py: 0.75,
-                boxShadow: 3,
+                boxShadow: isDark ? glow.cyanShadow : 3,
                 pointerEvents: "none",
                 maxWidth: 320,
               }}
@@ -476,14 +554,31 @@ export default function GraphExplorer() {
 
         <Box sx={{ width: { xs: "100%", lg: 320 }, flexShrink: 0 }}>
           {!detail && !detailLoading && (
-            <Box sx={{ p: 2.5, border: "1px dashed", borderColor: "divider", borderRadius: 2, textAlign: "center" }}>
+            <Box
+              sx={{
+                p: 2.5,
+                border: "1px dashed",
+                borderColor: isDark ? "rgba(148,163,220,0.25)" : "divider",
+                borderRadius: 2,
+                textAlign: "center",
+                bgcolor: isDark ? "rgba(17,21,36,0.4)" : undefined,
+              }}
+            >
               <Typography variant="body2" color="text.secondary">
                 Click any node to see its full record and every relationship it has — pulled live from Neo4j.
               </Typography>
             </Box>
           )}
           {detailLoading && (
-            <Box sx={{ p: 2.5, border: "1px solid", borderColor: "divider", borderRadius: 2 }}>
+            <Box
+              sx={{
+                p: 2.5,
+                border: "1px solid",
+                borderColor: "divider",
+                borderRadius: 2,
+                bgcolor: isDark ? "rgba(17,21,36,0.4)" : undefined,
+              }}
+            >
               <CircularProgress size={18} />
             </Box>
           )}
@@ -493,7 +588,17 @@ export default function GraphExplorer() {
             </Alert>
           )}
           {detail && !detailLoading && (
-            <Box sx={{ border: "1px solid", borderColor: "divider", borderRadius: 2, p: 2 }}>
+            <Box
+              sx={{
+                border: "1px solid",
+                borderColor: isDark ? "rgba(90,169,255,0.25)" : "divider",
+                borderRadius: 2,
+                p: 2,
+                bgcolor: isDark ? "rgba(17,21,36,0.55)" : "background.paper",
+                backdropFilter: isDark ? "blur(10px)" : undefined,
+                boxShadow: isDark ? glow.accentShadow : "none",
+              }}
+            >
               <Stack direction="row" justifyContent="space-between" alignItems="flex-start" sx={{ mb: 1 }}>
                 <Box>
                   <Chip size="small" label={detail.center.label} sx={{ bgcolor: colorForLabel(detail.center.label, palette), color: "#fff", mb: 0.75 }} />

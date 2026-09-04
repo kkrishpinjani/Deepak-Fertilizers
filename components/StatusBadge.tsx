@@ -1,6 +1,7 @@
 "use client";
 
 import { Stack, Typography, alpha, useTheme } from "@mui/material";
+import type { PaletteMode } from "@mui/material";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import WarningAmberRoundedIcon from "@mui/icons-material/WarningAmberRounded";
 import ErrorRoundedIcon from "@mui/icons-material/ErrorRounded";
@@ -46,6 +47,8 @@ export default function StatusBadge({
   size?: "small" | "medium";
   pill?: boolean;
 }) {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === ("dark" as PaletteMode);
   const color = useToneColor(tone);
   const Icon = ICONS[tone];
   const dim = size === "small" ? 13 : 15;
@@ -59,7 +62,8 @@ export default function StatusBadge({
         pill
           ? {
               display: "inline-flex",
-              bgcolor: alpha(color, 0.12),
+              bgcolor: alpha(color, isDark ? 0.16 : 0.12),
+              border: isDark ? `1px solid ${alpha(color, 0.3)}` : "none",
               borderRadius: 999,
               px: 1,
               py: 0.35,

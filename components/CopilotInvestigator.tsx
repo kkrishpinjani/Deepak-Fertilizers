@@ -26,6 +26,9 @@ import {
   TableBody,
 } from "@mui/material";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
+import VerifiedRoundedIcon from "@mui/icons-material/VerifiedRounded";
+import HubRoundedIcon from "@mui/icons-material/HubRounded";
+import { glow } from "./theme";
 import GroupedBarChart from "./charts/GroupedBarChart";
 import DivergingBarChart from "./charts/DivergingBarChart";
 import DonutChart from "./charts/DonutChart";
@@ -155,7 +158,10 @@ export default function CopilotInvestigator({ initialQuestion }: { initialQuesti
 
   return (
     <Stack spacing={3}>
-      <Card variant="outlined">
+      <Card
+        variant="outlined"
+        sx={{ backgroundImage: (t) => (t.palette.mode === "dark" ? glow.heroBackground : "none") }}
+      >
         <CardContent>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
             Ask a CFO-style investigation question. This runs a real multi-step
@@ -231,9 +237,10 @@ export default function CopilotInvestigator({ initialQuestion }: { initialQuesti
         <>
           <Card variant="outlined">
             <CardContent>
-              <Stack direction="row" spacing={1} alignItems="center">
+              <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" useFlexGap>
+                <VerifiedRoundedIcon sx={{ fontSize: 16, color: "primary.main" }} />
                 <Typography variant="overline" color="text.secondary">
-                  Investigation plan
+                  Governed investigation
                 </Typography>
                 <Chip
                   size="small"
@@ -241,22 +248,57 @@ export default function CopilotInvestigator({ initialQuestion }: { initialQuesti
                   color={result.intentVia === "ollama" ? "secondary" : "default"}
                   label={result.intentVia === "ollama" ? "Intent: local LLM (Qwen)" : "Intent: rule-based (LLM unavailable)"}
                 />
-                {result.agents?.length > 1 && (
-                  <Chip
-                    size="small"
-                    variant="outlined"
-                    color="info"
-                    label={`Multi-agent: ${result.agents.join(" + ")}`}
-                  />
-                )}
               </Stack>
-              <Stepper alternativeLabel sx={{ mt: 1 }}>
+              <Stepper
+                alternativeLabel
+                sx={{
+                  mt: 2,
+                  "& .MuiStepConnector-line": {
+                    borderColor: (t) => (t.palette.mode === "dark" ? "rgba(90,169,255,0.35)" : undefined),
+                  },
+                  "& .MuiStepIcon-root": {
+                    color: (t) => (t.palette.mode === "dark" ? "rgba(90,169,255,0.85)" : undefined),
+                    filter: (t) => (t.palette.mode === "dark" ? "drop-shadow(0 0 6px rgba(90,169,255,0.55))" : "none"),
+                  },
+                }}
+              >
                 {result.plan.steps.map((s: any) => (
                   <Step key={s.id} completed>
                     <StepLabel>{s.tool}</StepLabel>
                   </Step>
                 ))}
               </Stepper>
+
+              {result.agents?.length > 1 && (
+                <Stack
+                  direction={{ xs: "column", sm: "row" }}
+                  spacing={1.5}
+                  sx={{ mt: 2.5, p: 1.5, borderRadius: 2, border: "1px dashed", borderColor: "divider" }}
+                  divider={<HubRoundedIcon sx={{ fontSize: 16, color: "text.secondary", alignSelf: "center" }} />}
+                >
+                  {result.agents.map((a: string) => (
+                    <Stack
+                      key={a}
+                      spacing={0.25}
+                      sx={{
+                        flex: 1,
+                        px: 1.5,
+                        py: 1,
+                        borderRadius: 1.5,
+                        bgcolor: "action.hover",
+                      }}
+                    >
+                      <Typography variant="caption" sx={{ fontWeight: 700, textTransform: "uppercase", letterSpacing: 0.5, color: "info.main" }}>
+                        {a} agent
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        Contributed to this composed investigation
+                      </Typography>
+                    </Stack>
+                  ))}
+                </Stack>
+              )}
+
               {result.plan.entities.length > 0 && (
                 <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mt: 2 }}>
                   {result.plan.entities.map((e: string) => (
@@ -264,6 +306,24 @@ export default function CopilotInvestigator({ initialQuestion }: { initialQuesti
                   ))}
                 </Stack>
               )}
+
+              <Divider sx={{ my: 2 }} />
+              <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
+                {[
+                  "Ontology-scoped query",
+                  result.reconciliation.status === "RECONCILED" ? "KPI reconciled" : "KPI needs review",
+                  "Evidence scored",
+                  `Confidence calibrated (${result.confidence.level})`,
+                  result.actionProposal ? "Human approval required" : "No action proposed",
+                ].map((label) => (
+                  <Stack key={label} direction="row" spacing={0.5} alignItems="center">
+                    <VerifiedRoundedIcon sx={{ fontSize: 14, color: "success.main" }} />
+                    <Typography variant="caption" color="text.secondary">
+                      {label}
+                    </Typography>
+                  </Stack>
+                ))}
+              </Stack>
             </CardContent>
           </Card>
 
@@ -289,7 +349,20 @@ export default function CopilotInvestigator({ initialQuestion }: { initialQuesti
               </CardContent>
             </Card>
 
-            <Card variant="outlined" sx={{ flex: 1 }}>
+            <Card
+              variant="outlined"
+              sx={{
+                flex: 1,
+                boxShadow: (t) =>
+                  t.palette.mode === "dark"
+                    ? result.confidence.level === "HIGH"
+                      ? "0 0 0 1px rgba(74,222,128,0.18), 0 10px 28px rgba(74,222,128,0.10)"
+                      : result.confidence.level === "LOW"
+                      ? "0 0 0 1px rgba(248,113,113,0.18), 0 10px 28px rgba(248,113,113,0.10)"
+                      : undefined
+                    : undefined,
+              }}
+            >
               <CardContent>
                 <Typography variant="overline" color="text.secondary">
                   Confidence
@@ -392,11 +465,21 @@ export default function CopilotInvestigator({ initialQuestion }: { initialQuesti
           </Card>
 
           {result.actionProposal && (
-            <Card variant="outlined">
+            <Card
+              variant="outlined"
+              sx={{
+                borderColor: result.actionProposal.status === "PENDING_HUMAN_APPROVAL" ? "warning.main" : "divider",
+                boxShadow: (t) =>
+                  t.palette.mode === "dark" && result.actionProposal.status === "PENDING_HUMAN_APPROVAL"
+                    ? "0 0 0 1px rgba(251,191,36,0.25), 0 10px 28px rgba(251,191,36,0.10)"
+                    : undefined,
+              }}
+            >
               <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Proposed action
-                </Typography>
+                <Stack direction="row" spacing={0.75} alignItems="center" sx={{ mb: 0.5 }}>
+                  <VerifiedRoundedIcon sx={{ fontSize: 16, color: "warning.main" }} />
+                  <Typography variant="h6">Proposed action</Typography>
+                </Stack>
                 <Typography variant="body2" sx={{ mb: 0.5 }}>
                   <strong>{result.actionProposal.type}</strong> — {result.actionProposal.target}
                 </Typography>
@@ -453,13 +536,29 @@ export default function CopilotInvestigator({ initialQuestion }: { initialQuesti
 
           <Card variant="outlined">
             <CardContent>
-              <Typography variant="overline" color="text.secondary" gutterBottom>
-                Evidence
-              </Typography>
-              <Stack spacing={1} sx={{ mt: 1 }}>
+              <Stack direction="row" spacing={0.75} alignItems="center" sx={{ mb: 1 }}>
+                <VerifiedRoundedIcon sx={{ fontSize: 15, color: "success.main" }} />
+                <Typography variant="overline" color="text.secondary">
+                  Evidence
+                </Typography>
+              </Stack>
+              <Stack spacing={1}>
                 {result.evidence.map((e: any, i: number) => (
-                  <Stack key={i} direction="row" spacing={1.5} alignItems="flex-start">
-                    <Chip size="small" label={e.type} sx={{ mt: 0.25 }} />
+                  <Stack
+                    key={i}
+                    direction="row"
+                    spacing={1.5}
+                    alignItems="flex-start"
+                    sx={{
+                      p: 1.25,
+                      borderRadius: 1.5,
+                      border: "1px solid",
+                      borderColor: "divider",
+                      borderLeft: "3px solid",
+                      borderLeftColor: "success.main",
+                    }}
+                  >
+                    <Chip size="small" label={e.type} sx={{ mt: 0.25, fontFamily: "monospace" }} />
                     <Box sx={{ flex: 1 }}>
                       <Typography variant="body2">
                         {e.source} — relevance {(e.relevance * 100).toFixed(0)}%

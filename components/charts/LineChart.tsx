@@ -19,6 +19,7 @@ export default function LineChart({
   unit?: string;
 }) {
   const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
   const [hover, setHover] = useState<number | null>(null);
 
   const width = 640;
@@ -46,6 +47,13 @@ export default function LineChart({
   return (
     <Box sx={{ position: "relative" }}>
       <Box component="svg" viewBox={`0 0 ${width} ${height}`} sx={{ width: "100%", height: "auto", overflow: "visible" }}>
+        {isDark && (
+          <defs>
+            <filter id="lineChartGlow" x="-20%" y="-60%" width="140%" height="220%">
+              <feDropShadow dx="0" dy="0" stdDeviation="2.5" floodColor={theme.palette.primary.main} floodOpacity={0.65} />
+            </filter>
+          </defs>
+        )}
         {[0, 0.25, 0.5, 0.75, 1].map((f) => {
           const v = minV + f * (maxV - minV);
           return (
@@ -65,7 +73,15 @@ export default function LineChart({
           <line x1={marginLeft} x2={width - marginRight} y1={yFor(alarmThreshold)} y2={yFor(alarmThreshold)} stroke={theme.palette.error.main} strokeDasharray="4 3" strokeWidth={1.5} />
         )}
 
-        <path d={path} fill="none" stroke={theme.palette.primary.main} strokeWidth={2} strokeLinejoin="round" strokeLinecap="round" />
+        <path
+          d={path}
+          fill="none"
+          stroke={theme.palette.primary.main}
+          strokeWidth={2}
+          strokeLinejoin="round"
+          strokeLinecap="round"
+          filter={isDark ? "url(#lineChartGlow)" : undefined}
+        />
 
         {data.map((d, i) => (
           <circle

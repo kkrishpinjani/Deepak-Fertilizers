@@ -18,6 +18,10 @@ import ListAltRoundedIcon from "@mui/icons-material/ListAltRounded";
 import BoltRoundedIcon from "@mui/icons-material/BoltRounded";
 import ChevronLeftRoundedIcon from "@mui/icons-material/ChevronLeftRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
+import FactCheckRoundedIcon from "@mui/icons-material/FactCheckRounded";
+import SchemaRoundedIcon from "@mui/icons-material/SchemaRounded";
+import ExtensionRoundedIcon from "@mui/icons-material/ExtensionRounded";
+import MonitorHeartRoundedIcon from "@mui/icons-material/MonitorHeartRounded";
 import { useSidebar, SIDEBAR_WIDTH_EXPANDED, SIDEBAR_WIDTH_COLLAPSED } from "./SidebarContext";
 
 type NavItem = { href: string; label: string; icon: React.ReactNode };
@@ -59,15 +63,33 @@ const SECTIONS: NavGroup[] = [
       { href: "/glossary", label: "Glossary", icon: <MenuBookRoundedIcon /> },
     ],
   },
+  {
+    heading: "Advanced Intelligence",
+    items: [
+      { href: "/evaluation", label: "Evaluation Suite", icon: <FactCheckRoundedIcon /> },
+      { href: "/semantic-view", label: "Semantic View", icon: <SchemaRoundedIcon /> },
+      { href: "/mcp", label: "MCP / AI Tools", icon: <ExtensionRoundedIcon /> },
+      { href: "/connectors", label: "Connector Health", icon: <MonitorHeartRoundedIcon /> },
+    ],
+  },
 ];
 
-const NAVY = "#0e1830";
-const NAVY_BORDER = "rgba(255,255,255,0.08)";
+const NAVY = "#070b18";
+const NAVY_BORDER = "rgba(148,163,220,0.14)";
 const MUTED = "#8390ac";
 
 function SidebarContent({ collapsed, pathname, onNavigate }: { collapsed: boolean; pathname: string; onNavigate?: () => void }) {
   return (
-    <Box sx={{ height: "100%", display: "flex", flexDirection: "column", bgcolor: NAVY, color: "#fff" }}>
+    <Box
+      sx={{
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        bgcolor: NAVY,
+        backgroundImage: "radial-gradient(420px 260px at 0% 0%, rgba(90,169,255,0.14), transparent 60%)",
+        color: "#fff",
+      }}
+    >
       <Toolbar
         sx={{
           gap: 1,
@@ -82,6 +104,7 @@ function SidebarContent({ collapsed, pathname, onNavigate }: { collapsed: boolea
             height: 30,
             borderRadius: "8px",
             bgcolor: "primary.main",
+            boxShadow: "0 0 16px rgba(90,169,255,0.55)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -140,11 +163,12 @@ function SidebarContent({ collapsed, pathname, onNavigate }: { collapsed: boolea
                       justifyContent: collapsed ? "center" : "flex-start",
                       px: collapsed ? 1 : 1.5,
                       color: active ? "#fff" : "rgba(255,255,255,0.68)",
-                      "&:hover": { bgcolor: "rgba(255,255,255,0.06)" },
+                      "&:hover": { bgcolor: "rgba(148,163,220,0.08)" },
                       "&.Mui-selected": {
-                        bgcolor: "primary.main",
+                        bgcolor: "rgba(90,169,255,0.16)",
                         color: "#fff",
-                        "&:hover": { bgcolor: "primary.main" },
+                        boxShadow: "inset 2px 0 0 0 #5aa9ff",
+                        "&:hover": { bgcolor: "rgba(90,169,255,0.22)" },
                       },
                     }}
                   >

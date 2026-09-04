@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, CardContent, Typography, Box, Grid, TextField, InputAdornment, Chip, Stack, CircularProgress } from "@mui/material";
+import { Card, CardContent, Typography, Box, Grid, TextField, InputAdornment, Chip, Stack, CircularProgress, useTheme } from "@mui/material";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
+import { glow } from "./theme";
 
 type GlossaryRow = {
   term: string;
@@ -13,6 +14,8 @@ type GlossaryRow = {
 };
 
 export default function BusinessGlossary() {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
   const [rows, setRows] = useState<GlossaryRow[] | null>(null);
   const [query, setQuery] = useState("");
 
@@ -38,7 +41,17 @@ export default function BusinessGlossary() {
         placeholder="Search a term — e.g. EBITDA, working capital, attainment…"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        sx={{ mb: 3, maxWidth: 480 }}
+        sx={{
+          mb: 3,
+          maxWidth: 480,
+          "& .MuiOutlinedInput-root": {
+            transition: "box-shadow 160ms ease, border-color 160ms ease",
+            "&.Mui-focused .MuiOutlinedInput-notchedOutline": isDark
+              ? { borderColor: "primary.main" }
+              : undefined,
+            "&.Mui-focused": isDark ? { boxShadow: glow.accentShadow } : undefined,
+          },
+        }}
         InputProps={{ startAdornment: <InputAdornment position="start"><SearchRoundedIcon fontSize="small" sx={{ color: "text.secondary" }} /></InputAdornment> }}
       />
 
@@ -51,7 +64,18 @@ export default function BusinessGlossary() {
       <Grid container spacing={2}>
         {filtered.map((r) => (
           <Grid item xs={12} md={6} key={r.term}>
-            <Card variant="outlined" sx={{ height: "100%" }}>
+            <Card
+              variant="outlined"
+              sx={{
+                height: "100%",
+                transition: "border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease",
+                "&:hover": {
+                  borderColor: isDark ? "rgba(90,169,255,0.35)" : "primary.main",
+                  boxShadow: isDark ? glow.accentShadow : undefined,
+                  transform: "translateY(-1px)",
+                },
+              }}
+            >
               <CardContent>
                 <Stack direction="row" justifyContent="space-between" alignItems="flex-start" sx={{ mb: 0.75 }}>
                   <Typography variant="subtitle1">{r.term}</Typography>

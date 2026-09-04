@@ -26,6 +26,7 @@ export default function WaterfallChart({
   unit?: ChartUnit;
 }) {
   const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
   const [hover, setHover] = useState<{ label: string; value: string } | null>(null);
   const valueFormatter = (n: number) => formatChartValue(n, unit);
 
@@ -75,6 +76,17 @@ export default function WaterfallChart({
   return (
     <Box sx={{ position: "relative" }}>
       <Box component="svg" viewBox={`0 0 ${width} ${height}`} sx={{ width: "100%", height: "auto", overflow: "visible" }}>
+        {isDark && (
+          <defs>
+            <filter id="waterfallStepGlow" x="-40%" y="-40%" width="180%" height="180%">
+              <feDropShadow dx="0" dy="0" stdDeviation="1.4" floodColor={theme.palette.primary.main} floodOpacity={0.55} />
+            </filter>
+            <linearGradient id="waterfallTotalGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor={totalColor} stopOpacity={1} />
+              <stop offset="100%" stopColor={totalColor} stopOpacity={0.72} />
+            </linearGradient>
+          </defs>
+        )}
         <line x1={0} x2={width} y1={zeroY} y2={zeroY} stroke={gridColor} strokeWidth={1} />
         {positioned.map((b, i) => {
           const x = barGap + i * (barW + barGap);
@@ -91,13 +103,23 @@ export default function WaterfallChart({
                 width={barW}
                 height={h}
                 rx={3}
-                fill={color}
+                fill={b.kind === "total" && isDark ? "url(#waterfallTotalGrad)" : color}
+                fillOpacity={isDark && b.kind !== "total" ? 0.9 : 1}
                 onMouseEnter={() => setHover({ label: b.label, value: valueFormatter(b.kind === "total" ? b.value : b.value) })}
                 onMouseLeave={() => setHover(null)}
                 style={{ cursor: "pointer" }}
               />
               {i < positioned.length - 1 && (
-                <line x1={x + barW} x2={x + barW + barGap} y1={yFor(b.to)} y2={yFor(b.to)} stroke={gridColor} strokeDasharray="2,2" />
+                <line
+                  x1={x + barW}
+                  x2={x + barW + barGap}
+                  y1={yFor(b.to)}
+                  y2={yFor(b.to)}
+                  stroke={isDark ? theme.palette.primary.main : gridColor}
+                  strokeDasharray="2,2"
+                  strokeOpacity={isDark ? 0.8 : 1}
+                  filter={isDark ? "url(#waterfallStepGlow)" : undefined}
+                />
               )}
               <text x={x + barW / 2} y={height - marginBottom + 14} textAnchor="middle" fontSize={10} fill={neutral}>
                 {truncate(b.label, 12)}

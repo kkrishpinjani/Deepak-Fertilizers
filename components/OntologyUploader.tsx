@@ -17,13 +17,20 @@ import {
   Box,
   CircularProgress,
   Divider,
+  useTheme,
 } from "@mui/material";
 import UploadFileRoundedIcon from "@mui/icons-material/UploadFileRounded";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
+import RadioButtonUncheckedRoundedIcon from "@mui/icons-material/RadioButtonUncheckedRounded";
+import { glow } from "./theme";
 
 type UploadedFile = { name: string; csv: string };
 
+const PIPELINE_STAGES = ["Upload", "Profile", "Approve & Commit", "Committed"];
+
 export default function OntologyUploader() {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [batch, setBatch] = useState<any>(null);
   const [committing, setCommitting] = useState(false);
@@ -98,8 +105,65 @@ export default function OntologyUploader() {
     }
   }
 
+  const activeStage = committed ? 3 : batch ? 2 : files.length > 0 ? 1 : 0;
+
   return (
     <Stack spacing={3}>
+      <Stack direction="row" spacing={0} alignItems="center" sx={{ px: 0.5 }} flexWrap="wrap" rowGap={1}>
+        {PIPELINE_STAGES.map((label, i) => {
+          const isDone = i < activeStage;
+          const isActive = i === activeStage;
+          const stageColor = isDone ? theme.palette.success.main : isActive ? theme.palette.primary.main : theme.palette.text.secondary;
+          return (
+            <Stack key={label} direction="row" alignItems="center" sx={{ flex: "0 0 auto" }}>
+              <Stack direction="row" spacing={0.75} alignItems="center">
+                <Box
+                  sx={{
+                    width: 24,
+                    height: 24,
+                    borderRadius: "50%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    bgcolor: isDone || isActive ? (isDark ? `${stageColor}22` : `${stageColor}18`) : "transparent",
+                    border: `1.5px solid ${stageColor}`,
+                    boxShadow: isDark && isActive ? `0 0 10px ${stageColor}88` : "none",
+                    transition: "box-shadow 200ms ease, border-color 200ms ease",
+                  }}
+                >
+                  {isDone ? (
+                    <CheckCircleRoundedIcon sx={{ fontSize: 15, color: stageColor }} />
+                  ) : (
+                    <RadioButtonUncheckedRoundedIcon sx={{ fontSize: 13, color: stageColor, opacity: isActive ? 1 : 0.55 }} />
+                  )}
+                </Box>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    fontWeight: isActive ? 700 : 600,
+                    color: isDone || isActive ? "text.primary" : "text.secondary",
+                    opacity: isDone || isActive ? 1 : 0.65,
+                  }}
+                >
+                  {label}
+                </Typography>
+              </Stack>
+              {i < PIPELINE_STAGES.length - 1 && (
+                <Box
+                  sx={{
+                    width: { xs: 24, sm: 44 },
+                    height: 1.5,
+                    mx: 1,
+                    bgcolor: isDone ? theme.palette.success.main : "divider",
+                    opacity: isDone ? 0.8 : 1,
+                  }}
+                />
+              )}
+            </Stack>
+          );
+        })}
+      </Stack>
+
       <Card variant="outlined">
         <CardContent>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
@@ -174,7 +238,13 @@ export default function OntologyUploader() {
             </CardContent>
           </Card>
 
-          <Card variant="outlined">
+          <Card
+            variant="outlined"
+            sx={{
+              borderColor: isDark ? "rgba(90,169,255,0.3)" : undefined,
+              boxShadow: isDark ? glow.accentShadow : undefined,
+            }}
+          >
             <CardContent>
               <Typography variant="h6" sx={{ fontSize: 16 }} gutterBottom>
                 Proposed relationships ({batch.relationships.length})

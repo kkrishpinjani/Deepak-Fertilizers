@@ -1,6 +1,7 @@
 "use client";
 
-import { Box, Card, CardContent, Typography, Stack, Tooltip } from "@mui/material";
+import { Box, Card, CardContent, Typography, Stack, Tooltip, useTheme } from "@mui/material";
+import { glow } from "./theme";
 import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import CloudRoundedIcon from "@mui/icons-material/CloudRounded";
@@ -50,8 +51,19 @@ const STAGES = [
 ];
 
 export default function DataJourney() {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
+
   return (
-    <Card variant="outlined" sx={{ mb: 4 }}>
+    <Card
+      variant="outlined"
+      sx={{
+        mb: 4,
+        position: "relative",
+        overflow: "hidden",
+        backgroundImage: isDark ? glow.heroBackground : undefined,
+      }}
+    >
       <CardContent>
         <Typography variant="h6" sx={{ fontSize: 16, mb: 0.25 }}>
           How your data becomes an answer
@@ -62,6 +74,7 @@ export default function DataJourney() {
         <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "stretch", gap: 0.5 }}>
           {STAGES.map((s, i) => {
             const Icon = s.icon;
+            const isTerminal = i === STAGES.length - 1;
             return (
               <Box key={s.title} sx={{ display: "flex", alignItems: "center", flex: "1 1 150px" }}>
                 <Stack
@@ -73,8 +86,16 @@ export default function DataJourney() {
                     p: 1.5,
                     borderRadius: 2,
                     border: "1px solid",
-                    borderColor: "divider",
+                    borderColor: isDark && isTerminal ? "rgba(103,232,249,0.35)" : "divider",
                     minWidth: 130,
+                    bgcolor: isDark ? "rgba(17,21,36,0.4)" : undefined,
+                    boxShadow: isDark && isTerminal ? glow.cyanShadow : "none",
+                    transition: "border-color 200ms ease, box-shadow 200ms ease, transform 200ms ease",
+                    "&:hover": {
+                      borderColor: isDark ? "rgba(90,169,255,0.4)" : "primary.main",
+                      boxShadow: isDark ? glow.accentShadow : "none",
+                      transform: "translateY(-1px)",
+                    },
                   }}
                 >
                   <Box
@@ -82,8 +103,13 @@ export default function DataJourney() {
                       width: 34,
                       height: 34,
                       borderRadius: "9px",
-                      bgcolor: (t) => (t.palette.mode === "dark" ? "rgba(255,255,255,0.06)" : "rgba(42,95,176,0.08)"),
-                      color: "primary.main",
+                      bgcolor: (t) =>
+                        t.palette.mode === "dark"
+                          ? isTerminal
+                            ? "rgba(103,232,249,0.14)"
+                            : "rgba(90,169,255,0.10)"
+                          : "rgba(42,95,176,0.08)",
+                      color: isTerminal ? "info.main" : "primary.main",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
@@ -104,7 +130,15 @@ export default function DataJourney() {
                   </Typography>
                 </Stack>
                 {i < STAGES.length - 1 && (
-                  <ArrowForwardRoundedIcon sx={{ mx: 0.5, fontSize: 18, color: "text.secondary", opacity: 0.4, flexShrink: 0 }} />
+                  <ArrowForwardRoundedIcon
+                    sx={{
+                      mx: 0.5,
+                      fontSize: 18,
+                      color: isDark ? "primary.main" : "text.secondary",
+                      opacity: isDark ? 0.55 : 0.4,
+                      flexShrink: 0,
+                    }}
+                  />
                 )}
               </Box>
             );

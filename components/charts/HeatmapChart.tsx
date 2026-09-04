@@ -20,6 +20,7 @@ export default function HeatmapChart({
   unit?: ChartUnit;
 }) {
   const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
   const [hover, setHover] = useState<{ row: string; col: string; value: string } | null>(null);
   const valueFormatter = (n: number) => formatChartValue(n, unit);
 
@@ -81,6 +82,8 @@ export default function HeatmapChart({
                     height={cellH - 4}
                     rx={4}
                     fill={colorFor(v)}
+                    stroke={isDark ? "rgba(148,163,220,0.14)" : "none"}
+                    strokeWidth={isDark ? 1 : 0}
                     onMouseEnter={() => v !== undefined && setHover({ row, col, value: valueFormatter(v) })}
                     onMouseLeave={() => setHover(null)}
                     style={{ cursor: v !== undefined ? "pointer" : "default" }}

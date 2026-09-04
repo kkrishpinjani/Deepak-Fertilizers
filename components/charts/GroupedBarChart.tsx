@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Box, Stack, Typography, useTheme } from "@mui/material";
 import { ChartUnit, formatChartValue } from "./format";
+import { chartTokens } from "../theme";
 
 type SeriesDef = { key: string; label: string; variant?: "solid" | "ghost" };
 
@@ -26,8 +27,8 @@ export default function GroupedBarChart({
   // A series flagged "ghost" (the plan/budget line) always renders as a
   // hollow outline, never a solid fill — actual is the only filled bar.
   const solidPalette = [theme.palette.primary.main, theme.palette.warning.main, theme.palette.secondary.main];
-  const ghostFill = isDark ? "rgba(255,255,255,0.08)" : "rgba(20,23,28,0.07)";
-  const ghostStroke = isDark ? "rgba(255,255,255,0.45)" : "rgba(20,23,28,0.4)";
+  const ghostFill = isDark ? chartTokens.planFillDark : chartTokens.planFillLight;
+  const ghostStroke = isDark ? chartTokens.planStrokeDark : chartTokens.planStrokeLight;
   let solidIdx = 0;
   const colored = series.map((s) => {
     if (s.variant === "ghost") return { ...s, color: ghostFill, stroke: ghostStroke, ghost: true };
@@ -86,6 +87,18 @@ export default function GroupedBarChart({
       )}
 
       <Box component="svg" viewBox={`0 0 ${width} ${height}`} sx={{ width: "100%", height: "auto", overflow: "visible" }}>
+        {isDark && (
+          <defs>
+            {colored
+              .filter((s) => !s.ghost)
+              .map((s) => (
+                <linearGradient key={s.key} id={`gbc-grad-${s.key}`} x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor={s.color} stopOpacity={1} />
+                  <stop offset="100%" stopColor={s.color} stopOpacity={0.72} />
+                </linearGradient>
+              ))}
+          </defs>
+        )}
         {/* gridlines + y ticks */}
         {yTicks.map((t, i) => (
           <g key={i}>
@@ -121,7 +134,7 @@ export default function GroupedBarChart({
                       width={barW}
                       height={Math.max(0, barH)}
                       rx={4}
-                      fill={s.color}
+                      fill={s.ghost ? s.color : isDark ? `url(#gbc-grad-${s.key})` : s.color}
                       stroke={s.ghost ? s.stroke : "none"}
                       strokeWidth={s.ghost ? 1.25 : 0}
                       strokeDasharray={s.ghost ? "3 2" : undefined}
@@ -133,6 +146,9 @@ export default function GroupedBarChart({
                     />
                     {s.ghost && barH > 0 && (
                       <line x1={x - 1} x2={x + barW + 1} y1={y} y2={y} stroke={s.stroke} strokeWidth={2} />
+                    )}
+                    {!s.ghost && isDark && barH > 1 && (
+                      <line x1={x + 1} x2={x + barW - 1} y1={y} y2={y} stroke="rgba(255,255,255,0.35)" strokeWidth={1} />
                     )}
                   </g>
                 );

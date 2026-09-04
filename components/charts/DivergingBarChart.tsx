@@ -26,6 +26,7 @@ export default function DivergingBarChart({
 }) {
   const valueFormatter = (n: number) => formatChartValue(n, unit);
   const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
   const [hover, setHover] = useState<{ label: string; value: string } | null>(null);
 
   const rows = data.slice(0, maxRows);
@@ -38,7 +39,11 @@ export default function DivergingBarChart({
 
   const maxAbs = Math.max(1, ...rows.map((r) => Math.abs(r.value)));
   const zeroX = labelW + plotW / 2;
-  const scale = plotW / 2 / maxAbs;
+  // Reserve room so the longest bar's value label never collides with the
+  // row-label column — without this, the max-magnitude bar's edge lands
+  // exactly at the label boundary and its value text overlaps the label.
+  const valueLabelGutter = 44;
+  const scale = (plotW / 2 - valueLabelGutter) / maxAbs;
 
   const good = theme.palette.success.main;
   const bad = theme.palette.error.main;
@@ -85,6 +90,10 @@ export default function DivergingBarChart({
                 height={16}
                 rx={4}
                 fill={color}
+                fillOpacity={isDark ? 0.85 : 1}
+                stroke={isDark ? color : "none"}
+                strokeOpacity={isDark ? 0.5 : 0}
+                strokeWidth={isDark ? 1 : 0}
                 onMouseEnter={() => setHover({ label: r.label, value: valueFormatter(r.value) })}
                 onMouseLeave={() => setHover(null)}
                 style={{ cursor: "pointer" }}

@@ -1,4 +1,6 @@
-import { Card, CardContent, Typography, Stack, Box } from "@mui/material";
+"use client";
+
+import { Card, CardContent, Typography, Stack, Box, useTheme } from "@mui/material";
 
 export default function ChartCard({
   title,
@@ -14,8 +16,24 @@ export default function ChartCard({
   footnote?: React.ReactNode;
   children: React.ReactNode;
 }) {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
   return (
-    <Card variant="outlined" sx={{ height: "100%" }}>
+    // variant="outlined" here just opts into the MuiCard theme's border +
+    // glass background treatment (defined once in theme.ts) — no local
+    // color/blur overrides so every chart card stays visually consistent.
+    <Card
+      variant="outlined"
+      sx={{
+        height: "100%",
+        transition: "border-color 160ms ease, box-shadow 160ms ease",
+        ...(isDark && {
+          "&:hover": {
+            borderColor: "rgba(90,169,255,0.28)",
+          },
+        }),
+      }}
+    >
       <CardContent>
         <Stack direction="row" justifyContent="space-between" alignItems="flex-start" spacing={2} sx={{ mb: subtitle ? 0.25 : 1.5 }}>
           <Typography variant="h6" sx={{ fontSize: 16 }}>

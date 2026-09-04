@@ -20,6 +20,7 @@ export default function ScatterChart({
   unit?: ChartUnit;
 }) {
   const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
   const [hover, setHover] = useState<{ label: string; x: string; y: string } | null>(null);
   const valueFormatter = (n: number) => formatChartValue(n, unit);
 
@@ -47,7 +48,15 @@ export default function ScatterChart({
         <line x1={margin} x2={width - margin} y1={height - margin} y2={height - margin} stroke={gridColor} />
         <line x1={margin} x2={margin} y1={margin} y2={height - margin} stroke={gridColor} />
         {/* y = x reference line: on-plan performance */}
-        <line x1={px(minX)} x2={px(maxX)} y1={py(minX)} y2={py(maxX)} stroke={diagColor} strokeDasharray="3,3" opacity={0.5} />
+        <line
+          x1={px(minX)}
+          x2={px(maxX)}
+          y1={py(minX)}
+          y2={py(maxX)}
+          stroke={isDark ? theme.palette.info.main : diagColor}
+          strokeDasharray="3,3"
+          opacity={isDark ? 0.4 : 0.5}
+        />
         <text x={width - margin} y={height - margin + 16} textAnchor="end" fontSize={10} fill={diagColor}>
           Plan →
         </text>
@@ -65,8 +74,10 @@ export default function ScatterChart({
               cy={py(d.y)}
               r={r}
               fill={color}
-              fillOpacity={0.65}
+              fillOpacity={isDark ? 0.5 : 0.65}
               stroke={color}
+              strokeWidth={isDark ? 1.5 : 1}
+              strokeOpacity={isDark ? 0.9 : 1}
               onMouseEnter={() => setHover({ label: d.label, x: valueFormatter(d.x), y: valueFormatter(d.y) })}
               onMouseLeave={() => setHover(null)}
               style={{ cursor: "pointer" }}

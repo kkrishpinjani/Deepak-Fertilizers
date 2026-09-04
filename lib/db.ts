@@ -12,6 +12,11 @@ export function getPool() {
       waitForConnections: true,
       connectionLimit: 5,
       decimalNumbers: true,
+      // mysql2 defaults the connection to utf8mb4_unicode_ci regardless of the
+      // server's actual default, which mismatches MySQL 8.0's own default
+      // (utf8mb4_0900_ai_ci) and breaks comparisons against literals produced
+      // by views (e.g. CASE-derived columns) — ER_CANT_AGGREGATE_2COLLATIONS.
+      charset: "UTF8MB4_0900_AI_CI",
     });
   }
   return pool;

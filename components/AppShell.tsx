@@ -1,9 +1,15 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { Toolbar, Container, Box } from "@mui/material";
 import AppHeader from "./AppHeader";
 import Sidebar from "./Sidebar";
 import { SidebarProvider, useSidebar, SIDEBAR_WIDTH_EXPANDED, SIDEBAR_WIDTH_COLLAPSED } from "./SidebarContext";
+
+// Routes that render full-bleed, without the sidebar/header chrome —
+// currently just the login screen, which is meant to feel like an
+// immersive entry point rather than a dashboard page.
+const CHROMELESS_ROUTES = ["/login"];
 
 function ShellInner({ children }: { children: React.ReactNode }) {
   const { collapsed } = useSidebar();
@@ -32,6 +38,10 @@ function ShellInner({ children }: { children: React.ReactNode }) {
 }
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  if (CHROMELESS_ROUTES.includes(pathname)) {
+    return <>{children}</>;
+  }
   return (
     <SidebarProvider>
       <ShellInner>{children}</ShellInner>
