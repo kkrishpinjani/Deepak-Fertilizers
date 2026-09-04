@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Card, CardContent, Typography, Stack, Chip, CircularProgress, Box } from "@mui/material";
+import StatusBadge from "./StatusBadge";
 
 export default function ConnectorStatus() {
   const [data, setData] = useState<any>(null);
@@ -29,10 +30,11 @@ export default function ConnectorStatus() {
               <Stack direction="row" spacing={1} alignItems="center">
                 <Typography variant="subtitle2">{c.name}</Typography>
                 <Chip size="small" variant="outlined" label={c.mode} />
-                <Chip
+                <StatusBadge
+                  tone={c.healthy ? "positive" : c.configured ? "watch" : "neutral"}
+                  label={c.healthy ? "Connected" : c.configured ? "Configured, not reachable" : "Not connected"}
                   size="small"
-                  color={c.healthy ? "success" : c.configured ? "warning" : "default"}
-                  label={c.healthy ? "Healthy" : c.configured ? "Configured, not reachable" : "Not configured"}
+                  pill
                 />
               </Stack>
               <Typography variant="caption" color="text.secondary">

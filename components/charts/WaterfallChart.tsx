@@ -70,7 +70,7 @@ export default function WaterfallChart({
   const bad = theme.palette.error.main;
   const neutral = theme.palette.text.secondary;
   const totalColor = theme.palette.primary.main;
-  const gridColor = theme.palette.mode === "dark" ? "#2c2c2a" : "#e1e0d9";
+  const gridColor = theme.palette.divider;
 
   return (
     <Box sx={{ position: "relative" }}>

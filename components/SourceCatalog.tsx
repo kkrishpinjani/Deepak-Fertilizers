@@ -20,6 +20,7 @@ import {
   Button,
   Alert,
 } from "@mui/material";
+import StatusBadge from "./StatusBadge";
 
 export default function SourceCatalog() {
   const [data, setData] = useState<any>(null);
@@ -128,9 +129,9 @@ export default function SourceCatalog() {
                     <TableCell>{t.domain}</TableCell>
                     <TableCell>
                       {t.implemented ? (
-                        <Chip size="small" color="success" label={t.implemented_as || "Built"} />
+                        <StatusBadge tone="positive" label={t.implemented_as || "Built"} size="small" pill />
                       ) : (
-                        <Chip size="small" variant="outlined" label="Catalog only" />
+                        <StatusBadge tone="neutral" label="Not yet built" size="small" pill />
                       )}
                     </TableCell>
                   </TableRow>
@@ -159,9 +160,9 @@ export default function SourceCatalog() {
                     <TableCell>{e.source}</TableCell>
                     <TableCell>
                       {e.implemented ? (
-                        <Chip size="small" color="success" label={e.implemented_as || "Built"} />
+                        <StatusBadge tone="positive" label={e.implemented_as || "Built"} size="small" pill />
                       ) : (
-                        <Chip size="small" variant="outlined" label="Catalog only" />
+                        <StatusBadge tone="neutral" label="Not yet built" size="small" pill />
                       )}
                     </TableCell>
                   </TableRow>
@@ -192,9 +193,9 @@ export default function SourceCatalog() {
                     <TableCell>{r.to_entity}</TableCell>
                     <TableCell>
                       {r.implemented ? (
-                        <Chip size="small" color="success" label="Built" />
+                        <StatusBadge tone="positive" label="Built" size="small" pill />
                       ) : (
-                        <Chip size="small" variant="outlined" label="Catalog only" />
+                        <StatusBadge tone="neutral" label="Not yet built" size="small" pill />
                       )}
                     </TableCell>
                   </TableRow>

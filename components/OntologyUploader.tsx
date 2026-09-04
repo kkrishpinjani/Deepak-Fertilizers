@@ -135,7 +135,7 @@ export default function OntologyUploader() {
         <>
           <Card variant="outlined">
             <CardContent>
-              <Typography variant="h6" gutterBottom>
+              <Typography variant="h6" sx={{ fontSize: 16 }} gutterBottom>
                 Schema profile
               </Typography>
               {batch.tables.map((t: any) => (
@@ -176,7 +176,7 @@ export default function OntologyUploader() {
 
           <Card variant="outlined">
             <CardContent>
-              <Typography variant="h6" gutterBottom>
+              <Typography variant="h6" sx={{ fontSize: 16 }} gutterBottom>
                 Proposed relationships ({batch.relationships.length})
               </Typography>
               <Box sx={{ overflowX: "auto" }}>

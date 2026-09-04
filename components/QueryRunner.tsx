@@ -23,6 +23,7 @@ import {
 import AutoAwesomeRoundedIcon from "@mui/icons-material/AutoAwesomeRounded";
 import CodeRoundedIcon from "@mui/icons-material/CodeRounded";
 import { VERIFIED_QUERIES } from "@/lib/queries";
+import StatusBadge, { type Tone } from "./StatusBadge";
 
 type QueryResult = {
   question: string;
@@ -32,10 +33,10 @@ type QueryResult = {
   executionMs: number;
 };
 
-const STATUS_COLOR: Record<string, "error" | "warning" | "success"> = {
-  "AT RISK": "error",
-  WATCH: "warning",
-  "ON TRACK": "success",
+const STATUS_TONE: Record<string, Tone> = {
+  "AT RISK": "critical",
+  WATCH: "watch",
+  "ON TRACK": "positive",
 };
 
 function formatCell(value: any) {
@@ -192,11 +193,11 @@ export default function QueryRunner({
                         if (
                           (c.toLowerCase().includes("status") || c.toLowerCase() === "risk_status") &&
                           typeof value === "string" &&
-                          STATUS_COLOR[value]
+                          STATUS_TONE[value]
                         ) {
                           return (
                             <TableCell key={c}>
-                              <Chip size="small" color={STATUS_COLOR[value]} label={value} />
+                              <StatusBadge tone={STATUS_TONE[value]} label={value} size="small" pill />
                             </TableCell>
                           );
                         }

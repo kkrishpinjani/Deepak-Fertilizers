@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Box,
   Card,
@@ -25,8 +25,6 @@ import {
   TableCell,
   TableBody,
 } from "@mui/material";
-import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
-import WarningAmberRoundedIcon from "@mui/icons-material/WarningAmberRounded";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import GroupedBarChart from "./charts/GroupedBarChart";
 import DivergingBarChart from "./charts/DivergingBarChart";
@@ -35,6 +33,7 @@ import WaterfallChart from "./charts/WaterfallChart";
 import HeatmapChart from "./charts/HeatmapChart";
 import ScatterChart from "./charts/ScatterChart";
 import { ChartUnit } from "./charts/format";
+import StatusBadge, { type Tone } from "./StatusBadge";
 
 const SUGGESTIONS = [
   "Why is EBITDA below plan?",
@@ -43,14 +42,15 @@ const SUGGESTIONS = [
   "Where is production falling behind plan?",
 ];
 
-const CONFIDENCE_COLOR: Record<string, "success" | "warning" | "error"> = {
-  HIGH: "success",
-  MEDIUM: "warning",
-  LOW: "error",
+const CONFIDENCE_TONE: Record<string, Tone> = {
+  HIGH: "positive",
+  MEDIUM: "watch",
+  LOW: "critical",
 };
 
-export default function CopilotInvestigator() {
-  const [question, setQuestion] = useState(SUGGESTIONS[0]);
+export default function CopilotInvestigator({ initialQuestion }: { initialQuestion?: string }) {
+  const [question, setQuestion] = useState(initialQuestion || SUGGESTIONS[0]);
+  const askedInitial = useRef(false);
   const [loading, setLoading] = useState(false);
   // history[i] = { question, result } — a real drill-down trail, not just
   // the current answer. Clicking a driver row appends a new investigation
@@ -67,6 +67,14 @@ export default function CopilotInvestigator() {
   const [threadCount, setThreadCount] = useState(0);
 
   const result = history[history.length - 1]?.result || null;
+
+  useEffect(() => {
+    if (initialQuestion && !askedInitial.current) {
+      askedInitial.current = true;
+      startNew(initialQuestion);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialQuestion]);
 
   async function ensureThread(): Promise<string> {
     if (threadId) return threadId;
@@ -274,14 +282,10 @@ export default function CopilotInvestigator() {
                   </Typography>
                 )}
                 <Divider sx={{ my: 1.5 }} />
-                <Stack direction="row" spacing={1} alignItems="center">
-                  {result.reconciliation.status === "RECONCILED" ? (
-                    <CheckCircleRoundedIcon color="success" fontSize="small" />
-                  ) : (
-                    <WarningAmberRoundedIcon color="warning" fontSize="small" />
-                  )}
-                  <Typography variant="body2">Reconciliation: {result.reconciliation.status}</Typography>
-                </Stack>
+                <StatusBadge
+                  tone={result.reconciliation.status === "RECONCILED" ? "positive" : "watch"}
+                  label={result.reconciliation.status === "RECONCILED" ? "Numbers reconciled" : "Needs review"}
+                />
               </CardContent>
             </Card>
 
@@ -291,13 +295,15 @@ export default function CopilotInvestigator() {
                   Confidence
                 </Typography>
                 <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 0.5, mb: 1 }}>
-                  <Typography variant="h4">{(result.confidence.score * 100).toFixed(0)}%</Typography>
-                  <Chip size="small" color={CONFIDENCE_COLOR[result.confidence.level]} label={result.confidence.level} />
+                  <Typography variant="h4" sx={{ fontVariantNumeric: "tabular-nums" }}>
+                    {(result.confidence.score * 100).toFixed(0)}%
+                  </Typography>
+                  <StatusBadge tone={CONFIDENCE_TONE[result.confidence.level]} label={`${result.confidence.level} confidence`} size="small" pill />
                 </Stack>
                 <LinearProgress
                   variant="determinate"
                   value={result.confidence.score * 100}
-                  color={CONFIDENCE_COLOR[result.confidence.level]}
+                  color={result.confidence.level === "HIGH" ? "success" : result.confidence.level === "MEDIUM" ? "warning" : "error"}
                   sx={{ height: 6, borderRadius: 3 }}
                 />
               </CardContent>
@@ -398,16 +404,22 @@ export default function CopilotInvestigator() {
                   {result.actionProposal.reason}
                 </Typography>
                 <Stack direction="row" spacing={1} alignItems="center">
-                  <Chip
-                    size="small"
-                    label={result.actionProposal.status}
-                    color={
+                  <StatusBadge
+                    tone={
                       result.actionProposal.status === "APPROVED"
-                        ? "success"
+                        ? "positive"
                         : result.actionProposal.status === "REJECTED"
-                        ? "error"
-                        : "warning"
+                        ? "critical"
+                        : "watch"
                     }
+                    label={
+                      result.actionProposal.status === "APPROVED"
+                        ? "Approved"
+                        : result.actionProposal.status === "REJECTED"
+                        ? "Rejected"
+                        : "Awaiting your approval"
+                    }
+                    pill
                   />
                   {result.actionProposal.status === "PENDING_HUMAN_APPROVAL" && (
                     <>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Card,
   CardContent,
@@ -8,7 +8,6 @@ import {
   TextField,
   Button,
   Stack,
-  Alert,
   Chip,
   Table,
   TableHead,
@@ -17,8 +16,11 @@ import {
   TableBody,
   Box,
   CircularProgress,
+  InputAdornment,
 } from "@mui/material";
-import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
+import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
+import AutoAwesomeRoundedIcon from "@mui/icons-material/AutoAwesomeRounded";
+import StatusBadge from "./StatusBadge";
 
 function formatCell(value: any) {
   if (value === null || value === undefined) return "—";
@@ -31,17 +33,18 @@ function formatCell(value: any) {
 }
 
 const SUGGESTIONS = [
+  "Why is EBITDA below plan this month?",
   "Which plants missed budget?",
   "What is our gross margin?",
-  "Why did we miss revenue plan?",
-  "What is our EBITDA?",
+  "Which business unit is driving the revenue shortfall?",
 ];
 
-export default function AskCortex() {
-  const [question, setQuestion] = useState("Which plants missed budget?");
+export default function AskCortex({ initialQuestion }: { initialQuestion?: string }) {
+  const [question, setQuestion] = useState(initialQuestion || SUGGESTIONS[0]);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
+  const askedInitial = useRef(false);
 
   async function ask(q?: string) {
     const finalQuestion = q ?? question;
@@ -64,87 +67,111 @@ export default function AskCortex() {
     }
   }
 
+  useEffect(() => {
+    if (initialQuestion && !askedInitial.current) {
+      askedInitial.current = true;
+      ask(initialQuestion);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialQuestion]);
+
   const columns = result?.rows?.[0] ? Object.keys(result.rows[0]) : [];
 
   return (
-    <Card variant="outlined">
-      <CardContent>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          No need to know table or column names — just ask, or try one of these:
-        </Typography>
-
-        <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mb: 2 }}>
-          {SUGGESTIONS.map((s) => (
-            <Chip
-              key={s}
-              label={s}
-              size="small"
-              variant="outlined"
-              onClick={() => {
-                setQuestion(s);
-                ask(s);
-              }}
-            />
-          ))}
-        </Stack>
-
-        <Stack direction={{ xs: "column", sm: "row" }} spacing={2} sx={{ mb: 2 }}>
-          <TextField
-            fullWidth
-            size="small"
-            value={question}
-            onChange={(e) => setQuestion(e.target.value)}
-            placeholder='e.g. "Why did Pune plant miss revenue budget?"'
-            onKeyDown={(e) => e.key === "Enter" && ask()}
-          />
-          <Button
-            variant="contained"
-            onClick={() => ask()}
-            disabled={loading}
-            startIcon={loading ? <CircularProgress size={16} color="inherit" /> : undefined}
-          >
-            {loading ? "Thinking…" : "Ask"}
-          </Button>
-        </Stack>
-
-        {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
-
-        {result && !result.matched && (
-          <Alert severity="warning" sx={{ mb: 2 }}>
-            {result.message || "I couldn't find a confident answer to that. Try one of these instead:"}
-            <ul>
-              {result.suggestions?.map((s: any) => (
-                <li key={s.id}>{s.question}</li>
-              ))}
-            </ul>
-          </Alert>
-        )}
-
-        {result?.matched && (
-          <>
-            <Stack direction="row" spacing={1} sx={{ mb: 2 }} alignItems="center" flexWrap="wrap">
+    <Stack spacing={3}>
+      <Card variant="outlined">
+        <CardContent>
+          <Typography variant="caption" sx={{ fontWeight: 700, textTransform: "uppercase", letterSpacing: 0.6, color: "text.secondary" }}>
+            Try asking
+          </Typography>
+          <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mt: 1, mb: 2.5 }}>
+            {SUGGESTIONS.map((s) => (
               <Chip
+                key={s}
+                label={s}
                 size="small"
-                color="success"
-                icon={<CheckCircleRoundedIcon />}
-                label="Answer found"
+                variant="outlined"
+                onClick={() => {
+                  setQuestion(s);
+                  ask(s);
+                }}
               />
-              {result.engine === "ollama" && (
-                <Chip size="small" color="secondary" variant="outlined" label="Answered by local LLM (Qwen)" />
-              )}
-              {result.engine === "keyword-match" && (
-                <Chip size="small" variant="outlined" label="Matched by keyword (LLM unavailable)" />
-              )}
+            ))}
+          </Stack>
+
+          <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
+            <TextField
+              fullWidth
+              value={question}
+              onChange={(e) => setQuestion(e.target.value)}
+              placeholder='e.g. "Why did Taloja miss revenue budget?"'
+              onKeyDown={(e) => e.key === "Enter" && ask()}
+              InputProps={{ startAdornment: <InputAdornment position="start"><SearchRoundedIcon fontSize="small" sx={{ color: "text.secondary" }} /></InputAdornment> }}
+            />
+            <Button
+              variant="contained"
+              onClick={() => ask()}
+              disabled={loading}
+              sx={{ px: 3 }}
+              startIcon={loading ? <CircularProgress size={16} color="inherit" /> : <AutoAwesomeRoundedIcon fontSize="small" />}
+            >
+              {loading ? "Thinking…" : "Ask"}
+            </Button>
+          </Stack>
+        </CardContent>
+      </Card>
+
+      {error && (
+        <Card variant="outlined" sx={{ borderColor: "error.main" }}>
+          <CardContent>
+            <StatusBadge tone="critical" label="Couldn't answer that" />
+            <Typography variant="body2" sx={{ mt: 0.75 }}>
+              {error}
+            </Typography>
+          </CardContent>
+        </Card>
+      )}
+
+      {result && !result.matched && (
+        <Card variant="outlined" sx={{ borderLeft: "3px solid", borderLeftColor: "warning.main" }}>
+          <CardContent>
+            <StatusBadge tone="watch" label="No confident match" />
+            <Typography variant="body2" sx={{ mt: 1 }}>
+              {result.message || "I couldn't find a confident answer to that. Try one of these instead:"}
+            </Typography>
+            <Stack spacing={0.5} sx={{ mt: 1.5 }}>
+              {result.suggestions?.map((s: any) => (
+                <Typography key={s.id} variant="body2" sx={{ cursor: "pointer", color: "primary.main" }} onClick={() => ask(s.question)}>
+                  {s.question}
+                </Typography>
+              ))}
+            </Stack>
+          </CardContent>
+        </Card>
+      )}
+
+      {result?.matched && (
+        <Card variant="outlined" sx={{ borderLeft: "3px solid", borderLeftColor: "success.main" }}>
+          <CardContent>
+            <Stack direction="row" spacing={1} sx={{ mb: 2 }} alignItems="center" flexWrap="wrap" useFlexGap>
+              <StatusBadge tone="positive" label="Direct answer" />
+              {result.engine === "ollama" && <Chip size="small" variant="outlined" label="Answered by local LLM" />}
+              {result.engine === "keyword-match" && <Chip size="small" variant="outlined" label="Matched by keyword" />}
               {typeof result.confidence === "number" && result.confidence < 1 && (
                 <Chip size="small" variant="outlined" label="Approximate match" />
               )}
             </Stack>
+
             {result.text && (
-              <Typography variant="body2" sx={{ mb: 1.5 }}>
+              <Typography variant="body1" sx={{ mb: 2.5 }}>
                 {result.text}
               </Typography>
             )}
-            <Box sx={{ overflowX: "auto" }}>
+
+            <Typography variant="caption" sx={{ fontWeight: 700, textTransform: "uppercase", letterSpacing: 0.6, color: "text.secondary" }}>
+              Key numbers
+            </Typography>
+            <Box sx={{ overflowX: "auto", mt: 1 }}>
               <Table size="small">
                 <TableHead>
                   <TableRow>
@@ -157,16 +184,28 @@ export default function AskCortex() {
                   {result.rows.map((row: any, i: number) => (
                     <TableRow key={i} hover>
                       {columns.map((c) => (
-                        <TableCell key={c}>{formatCell(row[c])}</TableCell>
+                        <TableCell key={c} sx={{ fontVariantNumeric: "tabular-nums" }}>
+                          {formatCell(row[c])}
+                        </TableCell>
                       ))}
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
             </Box>
-          </>
-        )}
-      </CardContent>
-    </Card>
+          </CardContent>
+        </Card>
+      )}
+
+      {!result && !error && (
+        <Typography variant="body2" color="text.secondary">
+          Need a deeper investigation with root causes, confidence scoring and a recommended action? Try{" "}
+          <Typography component="a" href="/copilot" variant="body2" sx={{ color: "primary.main", fontWeight: 650 }}>
+            CFO Copilot
+          </Typography>{" "}
+          instead.
+        </Typography>
+      )}
+    </Stack>
   );
 }

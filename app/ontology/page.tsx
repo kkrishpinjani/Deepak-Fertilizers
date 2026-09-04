@@ -1,9 +1,11 @@
-import { Typography, Grid, Box } from "@mui/material";
+import { Grid, Box, Stack, Typography } from "@mui/material";
+import PageHeader from "@/components/PageHeader";
 import QueryRunner from "@/components/QueryRunner";
 import ChartCard from "@/components/charts/ChartCard";
 import DivergingBarChart from "@/components/charts/DivergingBarChart";
 import GroupedBarChart from "@/components/charts/GroupedBarChart";
 import GraphExplorer from "@/components/GraphExplorer";
+import RootCauseCascade from "@/components/RootCauseCascade";
 import { runQuery } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
@@ -30,24 +32,82 @@ async function getChartData() {
   return { ppv, rootCause, inventory };
 }
 
+function fmt(n: number) {
+  const sign = n < 0 ? "-" : "";
+  return `${sign}₹${(Math.abs(n) / 1_000_000).toFixed(2)}M`;
+}
+
 export default async function OntologyPage() {
   const { ppv, rootCause, inventory } = await getChartData();
 
+  const worstDriver = [...rootCause].sort((a, b) => Number(a.ebitda_impact) - Number(b.ebitda_impact))[0];
+  const topPpv = [...ppv].sort((a, b) => Number(b.ppv) - Number(a.ppv)).slice(0, 2);
+  const topExcess = [...inventory].sort((a, b) => Number(b.excess_value) - Number(a.excess_value))[0];
+
   return (
     <>
-      <Typography variant="h4" sx={{ mb: 0.5 }}>
-        Supply Chain & Root-Cause
-      </Typography>
-      <Typography variant="body1" color="text.secondary" sx={{ mb: 3, maxWidth: 760 }}>
-        Connects finance to inventory, suppliers, production and cash — where a
-        margin problem actually comes from, not just that it happened. Covers
-        purchase price variance, production cost variance, inventory exposure,
-        order-to-cash leakage, customer cash risk, working capital, capex
-        economics, and a ranked root-cause view across every dimension at once.
-      </Typography>
+      <PageHeader
+        eyebrow="Operations · Supply Chain & Root-Cause"
+        title="Supply Chain & Root-Cause"
+        takeaway="Connects finance to inventory, suppliers, production and cash — so a margin problem shows where it actually comes from, not just that it happened."
+        howThisWorks="Covers purchase price variance, production cost variance, inventory exposure, order-to-cash leakage, customer cash risk, working capital, capex economics, and a ranked root-cause view across every dimension at once — all queried live from the conformed finance and supply-chain model."
+      />
+
+      {worstDriver && (
+        <Box sx={{ mb: 4 }}>
+          <RootCauseCascade
+            stages={[
+              {
+                eyebrow: "Problem",
+                tone: "critical",
+                content: `${worstDriver.driver} is the single largest drag on EBITDA this period.`,
+              },
+              {
+                eyebrow: "Business impact",
+                tone: "critical",
+                content: `${fmt(Math.abs(Number(worstDriver.ebitda_impact)))} impact on EBITDA.`,
+              },
+              {
+                eyebrow: "Root cause",
+                tone: "watch",
+                content: topPpv.length
+                  ? `Purchasing ${topPpv[0].material_name} above standard cost is the leading contributor, compounded by excess inventory tying up cash.`
+                  : "Cost and volume pressure across key materials is compressing margin.",
+              },
+              {
+                eyebrow: "Contributing factors",
+                content: (
+                  <Stack spacing={0.4}>
+                    {topPpv.map((p) => (
+                      <Typography key={p.material_name} variant="body2">
+                        • {p.material_name} — {fmt(Number(p.ppv))} above standard cost
+                      </Typography>
+                    ))}
+                    {topExcess && (
+                      <Typography variant="body2">
+                        • {topExcess.product_name} — {fmt(Number(topExcess.excess_value))} excess inventory vs 90-day forecast demand
+                      </Typography>
+                    )}
+                  </Stack>
+                ),
+              },
+              {
+                eyebrow: "Recommended action",
+                tone: "positive",
+                content: topPpv.length
+                  ? `Renegotiate pricing and delivery schedule with the supplier(s) behind ${topPpv[0].material_name}, and review procurement timing to reduce purchase price variance.`
+                  : "Review supplier pricing and procurement schedule.",
+              },
+            ]}
+          />
+        </Box>
+      )}
 
       <Box sx={{ mb: 4 }}>
-        <ChartCard title="Ontology graph" subtitle="Live from a dedicated Neo4j container — real entities and relationships, seeded from the MySQL conformed model.">
+        <ChartCard
+          title="Ontology graph"
+          subtitle="Live from a dedicated Neo4j container — real entities and relationships, seeded from the conformed finance model."
+        >
           <GraphExplorer />
         </ChartCard>
       </Box>
@@ -75,7 +135,7 @@ export default async function OntologyPage() {
           </ChartCard>
         </Grid>
         <Grid item xs={12}>
-          <ChartCard title="Inventory value by product" subtitle="Total value vs the portion in excess of 90-day forecast demand.">
+          <ChartCard title="Inventory value by product" subtitle="Total value vs the portion in excess of 90-day forecast demand, ₹ millions.">
             <GroupedBarChart
               data={inventory.map((r) => ({
                 category: r.product_name,

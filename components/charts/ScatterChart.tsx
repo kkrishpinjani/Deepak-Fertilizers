@@ -38,7 +38,7 @@ export default function ScatterChart({
   const px = (v: number) => margin + ((v - minX) / range) * plotW;
   const py = (v: number) => height - margin - ((v - minX) / range) * plotH;
 
-  const gridColor = theme.palette.mode === "dark" ? "#2c2c2a" : "#e1e0d9";
+  const gridColor = theme.palette.divider;
   const diagColor = theme.palette.text.secondary;
 
   return (

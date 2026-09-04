@@ -32,7 +32,7 @@ export default function DivergingBarChart({
   const rowH = 28;
   const chartHeight = height ?? rows.length * rowH + 16;
   const width = 640;
-  const labelW = 168;
+  const labelW = 210;
   const marginRight = 56;
   const plotW = width - labelW - marginRight;
 
@@ -43,7 +43,7 @@ export default function DivergingBarChart({
   const good = theme.palette.success.main;
   const bad = theme.palette.error.main;
   const mutedColor = theme.palette.text.secondary;
-  const gridColor = theme.palette.mode === "dark" ? "#2c2c2a" : "#e1e0d9";
+  const gridColor = theme.palette.divider;
 
   return (
     <Box sx={{ position: "relative" }}>
@@ -76,7 +76,7 @@ export default function DivergingBarChart({
           return (
             <g key={r.label}>
               <text x={labelW - 12} y={y + rowH / 2 - 8} textAnchor="end" dominantBaseline="middle" fontSize={12} fill={theme.palette.text.primary}>
-                {truncate(r.label, 20)}
+                {truncate(r.label, 28)}
               </text>
               <rect
                 x={x}

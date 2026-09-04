@@ -41,7 +41,7 @@ export default function LineChart({
   }
 
   const path = data.map((d, i) => `${i === 0 ? "M" : "L"}${xFor(i)},${yFor(d.y)}`).join(" ");
-  const gridColor = theme.palette.mode === "dark" ? "#2c2c2a" : "#e1e0d9";
+  const gridColor = theme.palette.divider;
 
   return (
     <Box sx={{ position: "relative" }}>

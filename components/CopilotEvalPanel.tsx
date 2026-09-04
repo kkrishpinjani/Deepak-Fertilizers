@@ -5,6 +5,7 @@ import { Card, CardContent, Typography, Button, Stack, Chip, CircularProgress, T
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import CancelRoundedIcon from "@mui/icons-material/CancelRounded";
 import ScienceRoundedIcon from "@mui/icons-material/ScienceRounded";
+import StatusBadge from "./StatusBadge";
 
 export default function CopilotEvalPanel() {
   const [running, setRunning] = useState(false);
@@ -25,13 +26,15 @@ export default function CopilotEvalPanel() {
       <CardContent>
         <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
           <ScienceRoundedIcon color="action" fontSize="small" />
-          <Typography variant="h6">Evaluation Suite</Typography>
+          <Typography variant="h6" sx={{ fontSize: 16 }}>
+            Is the Copilot trustworthy? Run the evaluation suite
+          </Typography>
         </Stack>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          Runs the real copilot engine against 7 gold questions with fresh
-          ground truth computed from the live data — checks intent routing,
-          KPI accuracy (within tolerance), and safety guards. Every run is
-          logged, not just the latest.
+          Runs the same engine above against 7 known questions with fresh,
+          independently-computed correct answers — checking that it understood
+          the question, got the number right, and respected its safety
+          guards. Every run is logged, not just the latest.
         </Typography>
 
         <Button variant="contained" onClick={run} disabled={running} startIcon={running ? <CircularProgress size={16} color="inherit" /> : undefined}>
@@ -41,9 +44,10 @@ export default function CopilotEvalPanel() {
         {result && (
           <Box sx={{ mt: 2 }}>
             <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
-              <Chip
-                color={result.passed === result.total ? "success" : "warning"}
-                label={`${result.passed}/${result.total} passed`}
+              <StatusBadge
+                tone={result.passed === result.total ? "positive" : "watch"}
+                label={`${result.passed}/${result.total} checks passed`}
+                pill
               />
             </Stack>
             <Table size="small">

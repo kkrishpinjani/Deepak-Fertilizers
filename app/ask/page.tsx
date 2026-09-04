@@ -1,16 +1,15 @@
-import { Typography } from "@mui/material";
+import PageHeader from "@/components/PageHeader";
 import AskCortex from "@/components/AskCortex";
 
-export default function AskPage() {
+export default function AskPage({ searchParams }: { searchParams: { q?: string } }) {
   return (
     <>
-      <Typography variant="h4" sx={{ mb: 0.5 }}>
-        Ask a Question
-      </Typography>
-      <Typography variant="body1" color="text.secondary" sx={{ mb: 3, maxWidth: 720 }}>
-        Type a question in plain English and get an instant answer from the data.
-      </Typography>
-      <AskCortex />
+      <PageHeader
+        eyebrow="Executive · Ask a Question"
+        title="Ask a Business Question"
+        takeaway="Type a question in plain English — no table or column names required — and get a direct answer sourced from the live finance model, with the numbers behind it."
+      />
+      <AskCortex initialQuestion={searchParams?.q} />
     </>
   );
 }

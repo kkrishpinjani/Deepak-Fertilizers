@@ -1,60 +1,69 @@
 "use client";
 
-import { Card, CardContent, Typography, Stack, Box, useTheme } from "@mui/material";
-import TrendingUpRoundedIcon from "@mui/icons-material/TrendingUpRounded";
-import TrendingDownRoundedIcon from "@mui/icons-material/TrendingDownRounded";
-import TrendingFlatRoundedIcon from "@mui/icons-material/TrendingFlatRounded";
+import { Card, CardContent, Typography, Stack, Box, Tooltip } from "@mui/material";
+import Link from "next/link";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import type SvgIcon from "@mui/material/SvgIcon";
+import StatusBadge, { useToneColor, type Tone } from "./StatusBadge";
 
 type SvgIconComponent = typeof SvgIcon;
 
 export default function KpiCard({
   label,
   value,
-  sub,
-  positive,
+  status,
+  comparison,
+  helpText,
   icon: Icon,
   percent,
+  href,
 }: {
   label: string;
   value: string;
-  sub?: string;
-  positive?: boolean | null;
+  /** e.g. { tone: "watch", label: "Behind plan" } — always icon + word, never color alone. */
+  status?: { tone: Tone; label: string };
+  /** short line under the status, e.g. "₹0.21M below plan" */
+  comparison?: string;
+  /** one-line "what this means" shown via an info tooltip */
+  helpText?: string;
   icon?: SvgIconComponent;
-  /** 0-100+, renders a mini progress bar (e.g. attainment %) */
+  /** 0-100+, renders a mini progress bar (e.g. plan attainment) */
   percent?: number;
+  /** when set, the whole card links to a detail view (click-to-drill) */
+  href?: string;
 }) {
-  const theme = useTheme();
-  const accent =
-    positive === null || positive === undefined
-      ? theme.palette.text.secondary
-      : positive
-      ? theme.palette.success.main
-      : theme.palette.error.main;
+  const tone: Tone = status?.tone ?? "neutral";
+  const accent = useToneColor(tone);
 
-  const TrendIcon =
-    positive === null || positive === undefined
-      ? TrendingFlatRoundedIcon
-      : positive
-      ? TrendingUpRoundedIcon
-      : TrendingDownRoundedIcon;
-
-  return (
+  const content = (
     <Card
       variant="outlined"
       sx={{
-        minHeight: 132,
+        minHeight: 148,
         position: "relative",
         overflow: "hidden",
-        borderColor: "divider",
+        height: "100%",
+        transition: "border-color 0.15s, transform 0.15s",
+        ...(href && {
+          cursor: "pointer",
+          "&:hover": { borderColor: "primary.main", transform: "translateY(-1px)" },
+        }),
       }}
     >
-      <Box sx={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, bgcolor: accent, opacity: 0.85 }} />
+      <Box sx={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, bgcolor: accent, opacity: 0.9 }} />
       <CardContent>
         <Stack direction="row" alignItems="flex-start" justifyContent="space-between">
-          <Typography variant="body2" color="text.secondary" fontWeight={600}>
-            {label}
-          </Typography>
+          <Stack direction="row" spacing={0.5} alignItems="center">
+            <Typography variant="body2" color="text.secondary" fontWeight={650}>
+              {label}
+            </Typography>
+            {helpText && (
+              <Tooltip title={helpText} arrow placement="top">
+                <InfoOutlinedIcon sx={{ fontSize: 14, color: "text.secondary", opacity: 0.6 }} />
+              </Tooltip>
+            )}
+          </Stack>
           {Icon && (
             <Box
               sx={{
@@ -64,9 +73,9 @@ export default function KpiCard({
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                bgcolor: (t) =>
-                  t.palette.mode === "dark" ? "rgba(255,255,255,0.06)" : "rgba(22,87,192,0.08)",
+                bgcolor: (t) => (t.palette.mode === "dark" ? "rgba(255,255,255,0.06)" : "rgba(42,95,176,0.07)"),
                 color: "primary.main",
+                flexShrink: 0,
               }}
             >
               <Icon fontSize="small" />
@@ -74,21 +83,24 @@ export default function KpiCard({
           )}
         </Stack>
 
-        <Typography variant="h4" sx={{ mt: 0.5, fontSize: 26 }}>
+        <Typography variant="h4" sx={{ mt: 0.75, fontSize: 27, fontVariantNumeric: "tabular-nums" }}>
           {value}
         </Typography>
 
-        {sub && (
-          <Stack direction="row" spacing={0.5} alignItems="center" sx={{ mt: 0.5 }}>
-            {positive !== undefined && <TrendIcon sx={{ fontSize: 16, color: accent }} />}
-            <Typography variant="body2" sx={{ color: accent, fontWeight: 600 }}>
-              {sub}
-            </Typography>
-          </Stack>
+        {status && (
+          <Box sx={{ mt: 0.75 }}>
+            <StatusBadge tone={status.tone} label={status.label} size="small" />
+          </Box>
+        )}
+
+        {comparison && (
+          <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 0.35 }}>
+            {comparison}
+          </Typography>
         )}
 
         {typeof percent === "number" && (
-          <Box sx={{ mt: 1.5, height: 6, borderRadius: 3, bgcolor: "action.hover", overflow: "hidden" }}>
+          <Box sx={{ mt: 1.25, height: 6, borderRadius: 3, bgcolor: "action.hover", overflow: "hidden" }}>
             <Box
               sx={{
                 height: "100%",
@@ -100,7 +112,23 @@ export default function KpiCard({
             />
           </Box>
         )}
+
+        {href && (
+          <Stack direction="row" alignItems="center" spacing={0.25} sx={{ mt: 1, color: "primary.main" }}>
+            <Typography variant="caption" fontWeight={650}>
+              View details
+            </Typography>
+            <ChevronRightRoundedIcon sx={{ fontSize: 15 }} />
+          </Stack>
+        )}
       </CardContent>
     </Card>
+  );
+
+  if (!href) return content;
+  return (
+    <Link href={href} style={{ textDecoration: "none", color: "inherit", display: "block", height: "100%" }}>
+      {content}
+    </Link>
   );
 }
