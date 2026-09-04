@@ -1,0 +1,197 @@
+table,description,domain
+ACDOCA,Universal Journal,FI/CO
+BKPF,Accounting Document Header,FI
+BSEG,Accounting Document Segment,FI
+BSET,Tax Data Document Segment,FI
+BSIS,G/L Open/Index Items,FI
+BSAS,G/L Cleared/Index Items,FI
+BSID,Customer Open Items,FI-AR
+BSAD,Customer Cleared Items,FI-AR
+BSIK,Vendor Open Items,FI-AP
+BSAK,Vendor Cleared Items,FI-AP
+FAGLFLEXA,New GL Actual Line Items,FI
+FAGLFLEXT,New GL Totals,FI
+COBK,CO Document Header,CO
+COEP,CO Line Items,CO
+COSP,CO Totals,CO
+COSS,CO Totals Secondary,CO
+CSKA,Cost Element Master,CO
+CSKB,Cost Element Company Code,CO
+CSKS,Cost Center Master,CO
+CSKT,Cost Center Text,CO
+CEPC,Profit Center Master,CO
+CEPCT,Profit Center Text,CO
+AUFK,Order Master,CO/PP/PM
+AFKO,Production Order Header,PP
+AFPO,Production Order Item,PP
+AFVC,Order Operation,PP
+AFVV,Operation Quantities/Dates,PP
+AFRU,Confirmation,PP
+AFIH,Maintenance Order Header,PM
+ILOA,Location/Account Assignment,PM
+EQUI,Equipment Master,PM
+EQKT,Equipment Text,PM
+IFLOT,Functional Location,PM
+IFLOTX,Functional Location Text,PM
+QMEL,Quality Notification,QM
+QALS,Inspection Lot,QM
+QAMV,Inspection Characteristic,QM
+QAVE,Usage Decision,QM
+MARA,Material Master General,MM
+MAKT,Material Text,MM
+MARC,Material Plant,MM
+MARD,Storage Location Stock,MM
+MBEW,Material Valuation,MM
+MBEWH,Material Valuation History,MM
+MATDOC,Material Documents,MM
+MKPF,Material Document Header,MM
+MCHA,Batch Master,MM
+MCH1,Batch Master Cross-Plant,MM
+MCHB,Batch Stock,MM
+MCHBH,Batch Stock History,MM
+MSKA,Sales Order Stock,MM
+MSKU,Customer Stock,MM
+MSLB,Vendor Consignment Stock,MM
+MSPR,Project Stock,MM
+EKKO,Purchase Order Header,MM-PUR
+EKPO,Purchase Order Item,MM-PUR
+EKET,PO Schedule Lines,MM-PUR
+EKKN,PO Account Assignment,MM-PUR
+EKBE,PO History,MM-PUR
+EKES,Supplier Confirmations,MM-PUR
+EINA,Purchasing Info Record General,MM-PUR
+EINE,Purchasing Info Record Purchasing Org,MM-PUR
+LFA1,Vendor General,MM/AP
+LFB1,Vendor Company Code,AP
+LFM1,Vendor Purchasing Org,MM-PUR
+KNA1,Customer General,SD/AR
+KNB1,Customer Company Code,AR
+KNVV,Customer Sales Area,SD
+KNVP,Customer Partner Functions,SD
+BUT000,Business Partner General,BP
+BUT100,Business Partner Roles,BP
+BUT020,Business Partner Addresses,BP
+ADRC,Address Master,Cross
+T001,Company Code,FI
+T001W,Plant,MM/PP
+T001L,Storage Location,MM
+T009,Fiscal Year Variant,FI
+T009B,Fiscal Year Periods,FI
+T003,Document Types,FI
+T003T,Document Type Text,FI
+SKA1,G/L Account Chart of Accounts,FI
+SKAT,G/L Account Text,FI
+SKB1,G/L Account Company Code,FI
+T004,Chart of Accounts,FI
+TGSB,Business Area,FI
+TGSBT,Business Area Text,FI
+T005,Countries,Cross
+T005T,Country Text,Cross
+T006,Units of Measure,MM
+T006A,Units of Measure Text,MM
+T024,Purchasing Groups,MM-PUR
+T024E,Purchasing Organizations,MM-PUR
+T161,Purchasing Document Types,MM-PUR
+T163,Item Categories,MM-PUR
+T023,Material Groups,MM
+T023T,Material Group Text,MM
+T179,Product Hierarchy,SD/MM
+T179T,Product Hierarchy Text,SD/MM
+T134,Material Types,MM
+T134T,Material Type Text,MM
+T001K,Valuation Area,MM
+T025,Valuation Classes,MM
+T685,Pricing Conditions Types,SD
+T685T,Pricing Condition Type Text,SD
+A305,Pricing Condition Records Example,SD
+KONP,Condition Items,SD
+KONH,Condition Headers,SD
+PRCD_ELEMENTS,Pricing Elements,SD
+KONV,Pricing Conditions Legacy,SD
+VBFA,Document Flow,SD
+VBAK,Sales Order Header,SD
+VBAP,Sales Order Item,SD
+VBEP,Sales Schedule Line,SD
+VBKD,Sales Business Data,SD
+VBPA,Sales Document Partners,SD
+VBUK,Sales Document Header Status,SD
+VBUP,Sales Document Item Status,SD
+LIKP,Delivery Header,LE
+LIPS,Delivery Item,LE
+VLPKM,Delivery/Handling Related,LE
+VBRK,Billing Header,SD-Billing
+VBRP,Billing Item,SD-Billing
+RSEG,Invoice Receipt Item,MM-IV
+RBKP,Invoice Receipt Header,MM-IV
+ESSR,Service Entry Sheet,MM-SRV
+ESLL,Service Package Lines,MM-SRV
+ESLH,Service Package Header,MM-SRV
+PRPS,WBS Element,PS
+PROJ,Project Definition,PS
+COBRB,Settlement Rule,CO/PS
+BPBK,Budget/Plan Header,PS
+BPGE,Budget Values,PS
+BPJA,Budget Annual Values,PS
+BPPE,Budget Period Values,PS
+ANLA,Asset Master General,FI-AA
+ANLB,Asset Depreciation Terms,FI-AA
+ANLC,Asset Value Fields,FI-AA
+ANEK,Asset Document Header,FI-AA
+ANEP,Asset Line Items,FI-AA
+ANEA,Asset Proportional Values,FI-AA
+ANLP,Asset Periodic Values,FI-AA
+ANLU,Asset Master Origin,FI-AA
+FAAT_DOC_IT,Asset Accounting Document Items,FI-AA
+FAAT_DOC_IT_AA,Asset Accounting Document Items,FI-AA
+T093,Asset Accounting Config,FI-AA
+T093B,Depreciation Areas,FI-AA
+T095,Asset Class Account Determination,FI-AA
+T096,Asset Class Account Determination,FI-AA
+CKMLHD,Material Ledger Header,CO-ML
+CKMLPP,Material Ledger Period Data,CO-ML
+CKMLCR,Material Ledger Currency Data,CO-ML
+MLHD,Material Ledger Header Legacy,CO-ML
+MLIT,Material Ledger Items,CO-ML
+MLCR,Material Ledger Currencies,CO-ML
+MLCD,Material Ledger Documents,CO-ML
+CKMI1,Material Ledger Price History,CO-ML
+MSEG,Material Document Segment Legacy,MM
+MSTQ,Stock Quantity,MM
+MSTB,Stock Value,MM
+MSSA,Special Stock Aggregates,MM
+MSSQ,Special Stock Quantity,MM
+MSSL,Special Stock by Storage Location,MM
+MVKE,Material Sales Data,SD
+MLGN,Warehouse Material,EWM
+MLGT,Warehouse Material Storage Type,EWM
+LQUA,Quant,EWM
+LTAP,Transfer Order Item,LE-WM
+LTAK,Transfer Order Header,LE-WM
+VEKP,Handling Unit Header,LE
+VEPO,Handling Unit Item,LE
+STKO,BOM Header,PP
+STPO,BOM Item,PP
+MAST,Material to BOM Link,PP
+STAS,BOM Item Selection,PP
+PLKO,Routing Header,PP
+PLPO,Routing Operation,PP
+MAPL,Material Routing Assignment,PP
+PLMZ,Routing Assignment,PP
+CRHD,Work Center Header,PP
+CRTX,Work Center Text,PP
+KAKO,Capacity Header,PP
+KBED,Capacity Requirements,PP
+RESB,Reservation/Dependent Requirement,PP/MM
+MDKP,MRP Header,PP-MRP
+MDTB,MRP Table,PP-MRP
+PLAF,Planned Order,PP-MRP
+PBIM,Independent Requirements,PP-MRP
+PBED,Independent Requirement Data,PP-MRP
+MDSB,Dependent Requirements,PP-MRP
+VBBE,Sales Requirements,PP-MRP
+MDVM,MRP Planning File,PP-MRP
+SWWWIHEAD,Workflow Work Item Header,Workflow
+SWWLOGHIST,Workflow History,Workflow
+TSTC,Transaction Codes,Basis
+DD02L,Table Definitions,DDIC
+DD03L,Table Fields,DDIC

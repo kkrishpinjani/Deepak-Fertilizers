@@ -1,0 +1,16 @@
+services:
+  neo4j:
+    image: neo4j:5-community
+    container_name: sap-anaplan-neo4j
+    restart: unless-stopped
+    ports:
+      - "7474:7474" # browser UI: http://localhost:7474
+      - "7687:7687" # bolt (app connection)
+    environment:
+      NEO4J_AUTH: neo4j/SapAnaplan2026
+      NEO4J_PLUGINS: '["apoc"]'
+    volumes:
+      - sap-anaplan-neo4j-data:/data
+
+volumes:
+  sap-anaplan-neo4j-data:

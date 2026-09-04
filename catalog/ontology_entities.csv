@@ -1,0 +1,54 @@
+entity,description,source
+Company,Business entity/legal entity,SAP+Anaplan
+Plant,Manufacturing/location,SAP+Anaplan
+ProfitCenter,Profitability responsibility,SAP+Anaplan
+CostCenter,Cost ownership,SAP+Anaplan
+GLAccount,Financial account,SAP+Anaplan
+FiscalPeriod,Fiscal time,SAP+Anaplan
+Customer,Customer,SAP+Anaplan
+Vendor,Vendor,SAP+Anaplan
+Material,Product/material,SAP+Anaplan
+Inventory,Inventory position,SAP
+PurchaseOrder,Procurement commitment,SAP
+InvoiceReceipt,Supplier invoice,SAP
+SalesOrder,Customer order,SAP
+Delivery,Outbound delivery,SAP
+BillingDocument,Customer billing,SAP
+RevenuePosting,Revenue accounting,SAP
+AccountingDocument,Journal/accounting document,SAP
+AccountingItem,Journal item,SAP
+COItem,CO line item,SAP
+ProductionOrder,Production order,SAP
+ProductionOperation,Production operation,SAP
+Confirmation,Production confirmation,SAP
+Equipment,Asset/equipment,SAP
+FunctionalLocation,Functional location,SAP
+MaintenanceOrder,Maintenance order,SAP
+QualityNotification,Quality issue,SAP
+InspectionLot,Inspection lot,SAP
+Asset,Fixed asset,SAP
+Project,Project,SAP
+WBSElement,WBS element,SAP
+Plan,Planning model,Anaplan
+Forecast,Forecast,Anaplan
+Scenario,Scenario,Anaplan
+PlanningDriver,Planning driver,Anaplan
+DemandPlan,Demand plan,Anaplan
+SupplyPlan,Supply plan,Anaplan
+ProductionPlan,Production plan,Anaplan
+InventoryPlan,Inventory plan,Anaplan
+RevenuePlan,Revenue plan,Anaplan
+COGSPlan,COGS plan,Anaplan
+OpexPlan,Opex plan,Anaplan
+CashPlan,Cash plan,Anaplan
+ARPlan,AR plan,Anaplan
+APPlan,AP plan,Anaplan
+CapexPlan,Capex plan,Anaplan
+MarginPlan,Margin plan,Anaplan
+CapacityPlan,Capacity plan,Anaplan
+Variance,Actual-plan variance,Conformed
+Risk,Risk,Conformed
+Metric,Business metric,Semantic
+SourceTable,Physical source table,Metadata
+AnaplanModule,Anaplan module,Metadata
+AnaplanLineItem,Anaplan line item,Metadata

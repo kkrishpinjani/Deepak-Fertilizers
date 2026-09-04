@@ -1,0 +1,69 @@
+object,description,domain
+TENANT,Tenant,Platform
+WORKSPACE,Workspace,Platform
+MODEL,Model,Platform
+MODULE,Module,Metadata
+VIEW,Saved View,Metadata
+LIST,List,Metadata
+LIST_ITEM,List Item,Master Data
+LIST_PROPERTY,List Property,Master Data
+LINE_ITEM,Line Item,Metadata
+LINE_ITEM_FORMULA,Line Item Formula,Metadata
+LINE_ITEM_FORMAT,Line Item Format,Metadata
+DIMENSION,Dimension,Metadata
+TIME_DIMENSION,Time Dimension,Planning
+VERSION,Version,Planning
+IMPORT,Import,Integration
+EXPORT,Export,Integration
+ACTION,Action,Integration
+PROCESS,Process,Integration
+FILE,File,Integration
+WORKFLOW,Workflow,Planning
+USER,User,Security
+ROLE,Role,Security
+SELECTIVE_ACCESS,Selective Access,Security
+MODEL_CALENDAR,Model Calendar,Planning
+ORG_HIERARCHY,Organization Hierarchy,Planning
+GEOGRAPHY,Geography,Planning
+CURRENCY,Currency,Planning
+SCENARIO,Scenario,Planning
+ASSUMPTION,Assumption,Planning
+DRIVER,Planning Driver,Planning
+GL_ACCOUNT,G/L Account,Finance Planning
+COST_CENTER,Cost Center,Finance Planning
+PROFIT_CENTER,Profit Center,Finance Planning
+LEGAL_ENTITY,Legal Entity,Finance Planning
+PLANT,Plant,Supply Planning
+PRODUCT,Product,Supply Planning
+CUSTOMER,Customer,Commercial Planning
+VENDOR,Vendor,Procurement Planning
+REVENUE_PLAN,Revenue Plan,Finance
+COGS_PLAN,COGS Plan,Finance
+OPEX_PLAN,Opex Plan,Finance
+EBITDA_PLAN,EBITDA Plan,Finance
+CAPEX_PLAN,Capex Plan,Finance
+CASH_FLOW_PLAN,Cash Flow Plan,Finance
+AR_PLAN,AR Plan,Working Capital
+AP_PLAN,AP Plan,Working Capital
+WORKING_CAPITAL_PLAN,Working Capital Plan,Working Capital
+MARGIN_PLAN,Margin Plan,Finance
+PRICE_PLAN,Price Plan,Commercial
+SALES_PLAN,Sales Plan,Commercial
+DEMAND_PLAN,Demand Plan,Supply Chain
+SUPPLY_PLAN,Supply Plan,Supply Chain
+PRODUCTION_PLAN,Production Plan,Manufacturing
+CAPACITY_PLAN,Capacity Plan,Manufacturing
+INVENTORY_PLAN,Inventory Plan,Supply Chain
+PURCHASE_PLAN,Purchase Plan,Procurement
+PURCHASE_PRICE_PLAN,Purchase Price Plan,Procurement
+HEADCOUNT_PLAN,Headcount Plan,Workforce
+LABOR_COST_PLAN,Labor Cost Plan,Workforce
+S&OP_PLAN,S&OP Plan,Supply Chain
+FORECAST,Forecast,Planning
+BUDGET,Budget,Planning
+ACTUALS_LOAD,Actuals Load,Integration
+KPI_TARGET,KPI Target,Performance
+ALLOCATION,Allocation,Planning
+STATISTICAL_FORECAST,Statistical Forecast,Planning
+FORECAST_ACCURACY,Forecast Accuracy,Performance
+VARIANCE,Plan Actual Variance,Performance
