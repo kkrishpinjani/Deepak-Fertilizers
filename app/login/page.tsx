@@ -189,17 +189,14 @@ function LoginForm() {
   const passwordError = touched && password.length === 0;
   const canSubmit = EMAIL_RE.test(email) && password.length > 0;
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setTouched(true);
+  async function submitCredentials(loginEmail: string, loginPassword: string) {
     setAuthError(null);
-    if (!canSubmit) return;
     setSubmitting(true);
     try {
       const res = await fetch("/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, remember }),
+        body: JSON.stringify({ email: loginEmail, password: loginPassword, remember }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -214,6 +211,25 @@ function LoginForm() {
       setAuthError("We couldn't reach the server. Try again.");
       setSubmitting(false);
     }
+  }
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setTouched(true);
+    if (!canSubmit) return;
+    submitCredentials(email, password);
+  }
+
+  // Fills in the real demo account and signs in with it — still a genuine
+  // /api/login call checked against ADMIN_EMAIL/ADMIN_PASSWORD, just a
+  // one-click shortcut for this environment rather than a fake bypass.
+  function handleDemoLogin() {
+    const demoEmail = "admin@prime.com";
+    const demoPassword = "Admin@2026";
+    setEmail(demoEmail);
+    setPassword(demoPassword);
+    setTouched(true);
+    submitCredentials(demoEmail, demoPassword);
   }
 
   return (
@@ -303,10 +319,10 @@ function LoginForm() {
             </Box>
           </Box>
           <Typography variant="h5" sx={{ fontFamily: "var(--font-serif), Georgia, serif", fontWeight: 700 }}>
-            Finance Intelligence
+            Primesemonto
           </Typography>
           <Typography variant="caption" color="text.secondary" sx={{ letterSpacing: 0.5 }}>
-            ENTERPRISE AI · DEEPAK FERTILISERS &amp; PETROCHEMICALS
+            ENTERPRISE AI · FINANCE INTELLIGENCE
           </Typography>
         </Stack>
 
@@ -424,9 +440,16 @@ function LoginForm() {
                 {submitting ? "Entering workspace…" : "Sign in"}
               </Button>
 
-              <Typography variant="caption" color="text.secondary" sx={{ textAlign: "center" }}>
-                Sign in with your DFPCL workspace credentials.
-              </Typography>
+              <Button
+                type="button"
+                variant="outlined"
+                size="large"
+                disabled={submitting}
+                onClick={handleDemoLogin}
+                sx={{ py: 1.05, fontSize: 14.5 }}
+              >
+                Demo login
+              </Button>
 
               <Divider sx={{ my: 0.5 }}>
                 <Typography variant="caption" color="text.secondary">

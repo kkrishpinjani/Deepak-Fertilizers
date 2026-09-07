@@ -19,8 +19,8 @@ const sourceSerif = Source_Serif_4({
 });
 
 export const metadata: Metadata = {
-  title: "Finance Intelligence",
-  description: "DFPCL Finance & Operations Intelligence — actual performance, plan variance and emerging business risk, explained in plain English",
+  title: "Primesemonto",
+  description: "Primesemonto Finance & Operations Intelligence — actual performance, plan variance and emerging business risk, explained in plain English",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -163,10 +163,10 @@ export default function AppHeader() {
           <Stack direction="row" spacing={1.25} alignItems="center" sx={{ flexShrink: 0 }}>
             <Box>
               <Typography variant="subtitle1" sx={{ color: "#fff", lineHeight: 1.1, fontWeight: 750 }}>
-                Finance Intelligence
+                Primesemonto
               </Typography>
               <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.65)" }}>
-                Enterprise AI · Deepak Fertilisers &amp; Petrochemicals
+                Enterprise AI · Finance Intelligence
               </Typography>
             </Box>
           </Stack>
@@ -259,7 +259,7 @@ export default function AppHeader() {
           <Box sx={{ px: 2, py: 1.25 }}>
             <Typography variant="subtitle2">Finance Admin</Typography>
             <Typography variant="caption" color="text.secondary">
-              DFPCL Finance Team · Viewer
+              Finance Team · Viewer
             </Typography>
           </Box>
           <Divider />

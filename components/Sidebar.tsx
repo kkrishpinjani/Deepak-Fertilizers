@@ -116,10 +116,10 @@ function SidebarContent({ collapsed, pathname, onNavigate }: { collapsed: boolea
         {!collapsed && (
           <Box sx={{ minWidth: 0 }}>
             <Typography variant="subtitle2" sx={{ lineHeight: 1.15, color: "#fff" }} noWrap>
-              Finance Intelligence
+              Primesemonto
             </Typography>
             <Typography variant="caption" sx={{ color: MUTED }} noWrap>
-              DFPCL · Enterprise AI
+              Enterprise AI · Finance Intelligence
             </Typography>
           </Box>
         )}

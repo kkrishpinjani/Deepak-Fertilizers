@@ -3,8 +3,8 @@
 import { createTheme } from "@mui/material/styles";
 import type { PaletteMode } from "@mui/material";
 
-// Design tokens — "enterprise intelligence command center" for Deepak
-// Fertilisers Finance Intelligence. Deep navy/near-black canvas with electric
+// Design tokens — "enterprise intelligence command center" for Primesemonto
+// Finance Intelligence. Deep navy/near-black canvas with electric
 // blue/purple/cyan accents used sparingly for hierarchy, not decoration.
 // Green/red stay reserved for variance only; everything else is told in
 // words (StatusBadge always pairs icon + label). Source Serif 4 for
